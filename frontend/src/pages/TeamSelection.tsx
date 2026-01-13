@@ -143,8 +143,8 @@ export default function TeamSelection() {
     return <LoadingScreen message="Loading students..." />;
   }
 
-  const selectableStudents = students.filter((s) => s.selectable);
-  const unavailableStudents = students.filter((s) => !s.selectable);
+  const selectableStudents = students.filter((s) => s.selectable && s.rollNo !== username);
+  const unavailableStudents = students.filter((s) => !s.selectable && s.rollNo !== username);
   const canSubmit = selectedRolls.length === 2 && profile && profile.editAttemptsLeft > 0;
   const hasChanges = JSON.stringify(selectedRolls.sort()) !== JSON.stringify((profile?.currentChoices || []).sort());
   const isEditMode = (profile?.currentChoices?.length || 0) > 0;
