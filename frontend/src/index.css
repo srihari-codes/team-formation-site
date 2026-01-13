@@ -1,0 +1,196 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Consensus Protocol - Cyber Dashboard Theme
+   Dark mode first, neon cyan accents, minimal and serious
+*/
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 220 20% 10%;
+
+    --card: 220 20% 100%;
+    --card-foreground: 220 20% 10%;
+
+    --popover: 220 20% 100%;
+    --popover-foreground: 220 20% 10%;
+
+    --primary: 185 100% 40%;
+    --primary-foreground: 220 20% 5%;
+
+    --secondary: 220 15% 90%;
+    --secondary-foreground: 220 20% 10%;
+
+    --muted: 220 15% 85%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 185 100% 35%;
+    --accent-foreground: 220 20% 5%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 85%;
+    --input: 220 15% 85%;
+    --ring: 185 100% 40%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 20% 97%;
+    --sidebar-foreground: 220 20% 10%;
+    --sidebar-primary: 185 100% 40%;
+    --sidebar-primary-foreground: 220 20% 5%;
+    --sidebar-accent: 220 15% 90%;
+    --sidebar-accent-foreground: 220 20% 10%;
+    --sidebar-border: 220 15% 85%;
+    --sidebar-ring: 185 100% 40%;
+
+    --chart-1: 185 100% 40%;
+    --chart-2: 185 80% 50%;
+    --chart-3: 185 60% 60%;
+    --chart-4: 220 30% 50%;
+    --chart-5: 220 20% 40%;
+
+    --cyber-glow: 185 100% 50%;
+    --cyber-glow-muted: 185 60% 30%;
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 0%;
+
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    --shadow-glow: 0 0 20px hsl(185 100% 50% / 0.3);
+    --shadow-glow-lg: 0 0 40px hsl(185 100% 50% / 0.4);
+  }
+
+  .dark {
+    --background: 220 25% 6%;
+    --foreground: 210 20% 92%;
+
+    --card: 220 25% 10%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 185 100% 50%;
+    --primary-foreground: 220 25% 5%;
+
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 210 20% 92%;
+
+    --muted: 220 20% 20%;
+    --muted-foreground: 210 15% 55%;
+
+    --accent: 185 100% 45%;
+    --accent-foreground: 220 25% 5%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 18%;
+    --input: 220 20% 18%;
+    --ring: 185 100% 50%;
+
+    --sidebar-background: 220 25% 8%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 185 100% 50%;
+    --sidebar-primary-foreground: 220 25% 5%;
+    --sidebar-accent: 220 20% 18%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 185 100% 50%;
+
+    --chart-1: 185 100% 50%;
+    --chart-2: 185 80% 45%;
+    --chart-3: 185 60% 40%;
+    --chart-4: 220 30% 45%;
+    --chart-5: 220 20% 35%;
+
+    --cyber-glow: 185 100% 50%;
+    --cyber-glow-muted: 185 40% 25%;
+    --success: 160 84% 45%;
+    --success-foreground: 0 0% 0%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 0 0% 0%;
+
+    --shadow-glow: 0 0 20px hsl(185 100% 50% / 0.25);
+    --shadow-glow-lg: 0 0 40px hsl(185 100% 50% / 0.35);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Custom scrollbar for cyber aesthetic */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
+  }
+}
+
+@layer utilities {
+  .cyber-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .cyber-glow-lg {
+    box-shadow: var(--shadow-glow-lg);
+  }
+
+  .cyber-border {
+    @apply border border-primary/30;
+  }
+
+  .cyber-text-glow {
+    text-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-scan {
+    animation: scan 2s linear infinite;
+  }
+
+  @keyframes scan {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 0% 100%;
+    }
+  }
+
+  .grid-pattern {
+    background-image: 
+      linear-gradient(hsl(var(--primary) / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
