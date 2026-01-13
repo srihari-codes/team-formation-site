@@ -10,6 +10,7 @@ import { SplineBackground } from "@/components/SplineBackground";
 import { useAuth } from "@/hooks/useAuth";
 import { API_BASE_URL, getAuthHeader } from "@/config/api";
 import type { UserProfile } from "@/types/api";
+import { Footer } from "@/components/Footer";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -99,7 +100,7 @@ export default function Dashboard() {
         className="opacity-60"
       />
       
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col min-h-screen">
         <Header username={name || username} batch={batch} onLogout={handleLogout} />
         
         <main className="container py-6 space-y-6">
@@ -231,6 +232,7 @@ export default function Dashboard() {
             </p>
           </div>
         </main>
+        <Footer />
       </div>
     </div>
   );

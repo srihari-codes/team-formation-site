@@ -10,6 +10,7 @@ import { SplineBackground } from "@/components/SplineBackground";
 import { useAuth } from "@/hooks/useAuth";
 import { API_BASE_URL, getAuthHeader } from "@/config/api";
 import type { Student, UserProfile } from "@/types/api";
+import { Footer } from "@/components/Footer";
 
 export default function TeamSelection() {
   const navigate = useNavigate();
@@ -318,6 +319,7 @@ export default function TeamSelection() {
             </div>
           )}
         </main>
+        <Footer />
 
         {/* Fixed Submit Button at Bottom */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur border-t border-border">

@@ -4,6 +4,7 @@ import { Home } from "lucide-react";
 import { CyberButton } from "@/components/ui/cyber-button";
 import { GROUPIFY_LOGO } from "@/config/assets";
 import { CyberCard, CyberCardContent } from "@/components/ui/cyber-card";
+import { Footer } from "@/components/Footer";
 
 const NotFound = () => {
   const location = useLocation();
@@ -37,6 +38,7 @@ const NotFound = () => {
           <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-6 h-6 object-contain opacity-50" />
           <span className="text-xs font-mono">GROUPIFY PROTOCOL</span>
         </div>
+        <Footer />
       </div>
     </div>
   );

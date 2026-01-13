@@ -3,6 +3,7 @@ import { CyberCard, CyberCardContent } from "@/components/ui/cyber-card";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { SplineBackground } from "@/components/SplineBackground";
 import { GROUPIFY_LOGO } from "@/config/assets";
+import { Footer } from "@/components/Footer";
 
 export default function LockedState() {
   return (
@@ -38,6 +39,7 @@ export default function LockedState() {
             <span className="text-xs font-mono">GROUPIFY PROTOCOL</span>
           </div>
         </div>
+        <Footer />
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ import { SplineBackground } from "@/components/SplineBackground";
 import { API_BASE_URL } from "@/config/api";
 import { useAuth } from "@/hooks/useAuth";
 import { GROUPIFY_LOGO } from "@/config/assets";
+import { Footer } from "@/components/Footer";
 
 type AuthStep = "credentials" | "otp";
 
@@ -393,6 +394,7 @@ export default function Login() {
             Use your ERP credentials to authenticate
           </p>
         </div>
+        <Footer />
       </div>
     </div>
   );

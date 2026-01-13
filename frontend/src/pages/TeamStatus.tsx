@@ -11,6 +11,7 @@ import { SplineBackground } from "@/components/SplineBackground";
 import { useAuth } from "@/hooks/useAuth";
 import { API_BASE_URL, getAuthHeader } from "@/config/api";
 import type { TeamStatus } from "@/types/api";
+import { Footer } from "@/components/Footer";
 
 export default function TeamStatusPage() {
   const navigate = useNavigate();
@@ -190,6 +191,7 @@ export default function TeamStatusPage() {
             </div>
           )}
         </main>
+        <Footer />
       </div>
     </div>
   );

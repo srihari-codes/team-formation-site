@@ -14,6 +14,7 @@ import { SplineBackground } from "@/components/SplineBackground";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/config/api";
 import { GROUPIFY_LOGO } from "@/config/assets";
+import { Footer } from "@/components/Footer";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -187,6 +188,7 @@ export default function ForgotPassword() {
             </CyberCardContent>
           </CyberCard>
         </div>
+        <Footer />
       </div>
     </div>
   );

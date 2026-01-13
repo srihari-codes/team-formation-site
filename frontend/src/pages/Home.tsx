@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/cyber-card";
 import { SplineBackground } from "@/components/SplineBackground";
 import { GROUPIFY_LOGO } from "@/config/assets";
+import { Footer } from "@/components/Footer";
 import {
   Users,
   ShieldAlert,
@@ -220,6 +221,7 @@ const Home = () => {
           </section>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
