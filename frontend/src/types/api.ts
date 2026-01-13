@@ -25,6 +25,7 @@ export interface LoginResponse {
 
 export interface UserProfile {
   rollNo: string;
+  name: string;
   batch: "A" | "B";
   teamId: string | null;
   editAttemptsLeft: number;
@@ -33,6 +34,7 @@ export interface UserProfile {
 
 export interface Student {
   rollNo: string;
+  name: string;
   selectable: boolean;
 }
 

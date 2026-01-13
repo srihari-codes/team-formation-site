@@ -464,6 +464,7 @@ app.get('/me', authMiddleware, async (req, res) => {
   const pref = await Preference.findOne({ rollNo: req.user.username });
   res.json({
     rollNo: student.rollNo,
+    name: student.name,
     batch: student.batch,
     teamId: student.teamId,
     editAttemptsLeft: student.editAttemptsLeft,

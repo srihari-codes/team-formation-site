@@ -13,7 +13,7 @@ import type { Student, UserProfile } from "@/types/api";
 
 export default function TeamSelection() {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: authLoading, logout, username, batch } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, logout, username, batch, name } = useAuth();
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [students, setStudents] = useState<Student[]>([]);
@@ -157,7 +157,7 @@ export default function TeamSelection() {
       />
       
       <div className="relative z-10">
-        <Header username={username} batch={batch} onLogout={handleLogout} />
+        <Header username={name || username} batch={batch} onLogout={handleLogout} />
         
         <main className="container py-6 space-y-4 pb-24">
           {/* Back Button */}
@@ -203,26 +203,32 @@ export default function TeamSelection() {
                 </p>
               ) : (
                 <div className="space-y-2">
-                  {selectedRolls.map((rollNo, index) => (
-                    <div 
-                      key={rollNo}
-                      className="flex items-center justify-between p-3 rounded-lg bg-primary/10 border border-primary/30"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-mono text-primary">
-                          {index + 1}
-                        </span>
-                        <span className="font-mono text-sm">{rollNo}</span>
-                      </div>
-                      <button
-                        onClick={() => handleRemove(rollNo)}
-                        className="p-1.5 rounded-md hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
-                        title="Remove from selection"
+                  {selectedRolls.map((rollNo, index) => {
+                    const student = students.find(s => s.rollNo === rollNo);
+                    return (
+                      <div 
+                        key={rollNo}
+                        className="flex items-center justify-between p-3 rounded-lg bg-primary/10 border border-primary/30"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <span className="w-6 h-6 rounded-full bg-primary/20 flex-shrink-0 flex items-center justify-center text-xs font-mono text-primary">
+                            {index + 1}
+                          </span>
+                          <div className="flex flex-col truncate">
+                            <span className="font-mono text-sm font-bold uppercase truncate">{student?.name || rollNo}</span>
+                            <span className="font-mono text-[10px] text-muted-foreground">{rollNo}</span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleRemove(rollNo)}
+                          className="p-1.5 rounded-md hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+                          title="Remove from selection"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
                   {selectedRolls.length === 1 && (
                     <p className="text-xs text-muted-foreground text-center pt-2">
                       Select 1 more teammate to proceed
@@ -279,6 +285,7 @@ export default function TeamSelection() {
                     <StudentCard
                       key={student.rollNo}
                       rollNo={student.rollNo}
+                      name={student.name}
                       selectable={student.selectable}
                       isSelected={isSelected}
                       onToggle={handleSelect}
@@ -301,6 +308,7 @@ export default function TeamSelection() {
                   <StudentCard
                     key={student.rollNo}
                     rollNo={student.rollNo}
+                    name={student.name}
                     selectable={false}
                     isSelected={false}
                     onToggle={() => {}}
@@ -359,14 +367,20 @@ export default function TeamSelection() {
                     You are about to submit your team selection:
                   </p>
                   <div className="space-y-2">
-                    {selectedRolls.map((rollNo, index) => (
-                      <div key={rollNo} className="flex items-center gap-3 p-2 rounded-md bg-primary/10 border border-primary/30">
-                        <span className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-xs font-mono text-primary">
-                          {index + 1}
-                        </span>
-                        <span className="font-mono text-sm">{rollNo}</span>
-                      </div>
-                    ))}
+                    {selectedRolls.map((rollNo, index) => {
+                      const student = students.find(s => s.rollNo === rollNo);
+                      return (
+                        <div key={rollNo} className="flex items-center gap-3 p-2 rounded-md bg-primary/10 border border-primary/30">
+                          <span className="w-5 h-5 rounded-full bg-primary/20 flex-shrink-0 flex items-center justify-center text-xs font-mono text-primary">
+                            {index + 1}
+                          </span>
+                          <div className="flex flex-col truncate">
+                            <span className="font-mono text-sm font-bold uppercase truncate">{student?.name || rollNo}</span>
+                            <span className="font-mono text-[10px] text-muted-foreground">{rollNo}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 

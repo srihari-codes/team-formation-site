@@ -14,7 +14,7 @@ import type { TeamStatus } from "@/types/api";
 
 export default function TeamStatusPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: authLoading, logout, username, batch } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, logout, username, batch, name } = useAuth();
   
   const [status, setStatus] = useState<TeamStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -78,7 +78,7 @@ export default function TeamStatusPage() {
       />
       
       <div className="relative z-10">
-        <Header username={username} batch={batch} onLogout={handleLogout} />
+        <Header username={name || username} batch={batch} onLogout={handleLogout} />
         
         <main className="container py-6 space-y-6">
           {/* Back Button */}

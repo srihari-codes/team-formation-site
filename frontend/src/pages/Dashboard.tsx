@@ -13,7 +13,7 @@ import type { UserProfile } from "@/types/api";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: authLoading, logout, username, batch } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, logout, username, batch, name, updateName } = useAuth();
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,6 +45,9 @@ export default function Dashboard() {
           setError(data.error);
         } else {
           setProfile(data);
+          if (data.name) {
+            updateName(data.name);
+          }
           // If already in a team, redirect to team status
           if (data.teamId) {
             navigate("/team/status");
@@ -98,7 +101,7 @@ export default function Dashboard() {
       />
       
       <div className="relative z-10">
-        <Header username={username} batch={batch} onLogout={handleLogout} />
+        <Header username={name || username} batch={batch} onLogout={handleLogout} />
         
         <main className="container py-6 space-y-6">
           {/* Status Banner */}
@@ -122,14 +125,18 @@ export default function Dashboard() {
             </CyberCardContent>
           </CyberCard>
 
-          {/* Profile Info */}
           <div className="grid gap-4 sm:grid-cols-2">
             <CyberCard>
               <CyberCardHeader>
-                <CyberCardTitle>Your Roll Number</CyberCardTitle>
+                <CyberCardTitle>Student Profile</CyberCardTitle>
               </CyberCardHeader>
-              <CyberCardContent>
-                <p className="font-mono text-lg text-foreground">{profile?.rollNo}</p>
+              <CyberCardContent className="space-y-1">
+                <p className="font-mono text-lg font-bold text-foreground uppercase truncate">
+                  {profile?.name}
+                </p>
+                <p className="font-mono text-sm text-muted-foreground">
+                  {profile?.rollNo}
+                </p>
               </CyberCardContent>
             </CyberCard>
 

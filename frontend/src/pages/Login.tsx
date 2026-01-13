@@ -175,7 +175,8 @@ export default function Login() {
         setError(msg);
         toast.error(msg);
       } else if (data.access_token) {
-        login(data.access_token, data.username, data.batch);
+        // Name is not returned by login, will be fetched in dashboard
+        login(data.access_token, data.username, data.batch, "");
         toast.success("Authentication successful. Welcome back.");
         navigate("/me");
       } else {

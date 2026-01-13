@@ -4,12 +4,14 @@ interface AuthState {
   isAuthenticated: boolean;
   token: string | null;
   username: string | null;
+  name: string | null;
   batch: "A" | "B" | null;
   isLoading: boolean;
 }
 
 interface AuthContextType extends AuthState {
-  login: (token: string, username: string, batch: "A" | "B") => void;
+  login: (token: string, username: string, batch: "A" | "B", name: string) => void;
+  updateName: (name: string) => void;
   logout: () => void;
 }
 
@@ -20,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: false,
     token: null,
     username: null,
+    name: null,
     batch: null,
     isLoading: true,
   });
@@ -27,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     const username = localStorage.getItem("username");
+    const name = localStorage.getItem("name");
     const batch = localStorage.getItem("batch") as "A" | "B" | null;
 
     if (token) {
@@ -34,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: true,
         token,
         username,
+        name,
         batch,
         isLoading: false,
       });
@@ -42,34 +47,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback((token: string, username: string, batch: "A" | "B") => {
+  const login = useCallback((token: string, username: string, batch: "A" | "B", name: string) => {
     localStorage.setItem("access_token", token);
     localStorage.setItem("username", username);
     localStorage.setItem("batch", batch);
+    localStorage.setItem("name", name);
     setAuthState({
       isAuthenticated: true,
       token,
       username,
+      name,
       batch,
       isLoading: false,
     });
+  }, []);
+
+  const updateName = useCallback((name: string) => {
+    localStorage.setItem("name", name);
+    setAuthState(prev => ({ ...prev, name }));
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("username");
     localStorage.removeItem("batch");
+    localStorage.removeItem("name");
     setAuthState({
       isAuthenticated: false,
       token: null,
       username: null,
+      name: null,
       batch: null,
       isLoading: false,
     });
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...authState, login, logout }}>
+    <AuthContext.Provider value={{ ...authState, login, updateName, logout }}>
       {children}
     </AuthContext.Provider>
   );

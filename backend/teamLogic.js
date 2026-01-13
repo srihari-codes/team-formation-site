@@ -68,9 +68,10 @@ async function tryFormTeam(rollNo) {
  * Get all students in a batch with selectability status
  */
 async function getStudentsByBatch(batch) {
-  const students = await Student.find({ batch }).select('rollNo teamId -_id');
+  const students = await Student.find({ batch }).select('rollNo name teamId -_id');
   return students.map(s => ({
     rollNo: s.rollNo,
+    name: s.name,
     selectable: s.teamId === null
   }));
 }

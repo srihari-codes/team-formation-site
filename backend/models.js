@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 // Student Schema
 const studentSchema = new mongoose.Schema({
   rollNo: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
   batch: { type: String, required: true, enum: ['A', 'B'] },
   teamId: { type: mongoose.Schema.Types.ObjectId, ref: 'Team', default: null },
   editAttemptsLeft: { type: Number, default: 2, min: 0, max: 2 }

@@ -4,13 +4,14 @@ import { cn } from "@/lib/utils";
 
 interface StudentCardProps {
   rollNo: string;
+  name: string;
   selectable: boolean;
   isSelected: boolean;
   onToggle: (rollNo: string) => void;
   disabled?: boolean;
 }
 
-export function StudentCard({ rollNo, selectable, isSelected, onToggle, disabled }: StudentCardProps) {
+export function StudentCard({ rollNo, name, selectable, isSelected, onToggle, disabled }: StudentCardProps) {
   const canInteract = selectable && !disabled;
   
   const variant = isSelected 
@@ -45,7 +46,8 @@ export function StudentCard({ rollNo, selectable, isSelected, onToggle, disabled
         </div>
         
         <div className="flex-1 min-w-0">
-          <p className="font-mono text-sm text-foreground truncate">{rollNo}</p>
+          <p className="font-mono text-sm font-bold text-foreground truncate uppercase">{name}</p>
+          <p className="font-mono text-xs text-muted-foreground truncate">{rollNo}</p>
           {!selectable && (
             <p className="text-xs text-muted-foreground">Unavailable</p>
           )}
