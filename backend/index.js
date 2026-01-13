@@ -127,8 +127,8 @@ async function erpRequest(options) {
   }
 }
 
-function generateTempToken(username, sessionId) {
-  return jwt.sign({ username, sessionId, type: 'temp' }, TEMP_SECRET, { expiresIn: '5m' });
+function generateTempToken(username, sessionId, iValue) {
+  return jwt.sign({ username, sessionId, iValue, type: 'temp' }, TEMP_SECRET, { expiresIn: '5m' });
 }
 
 function verifyTempToken(token) {
@@ -344,7 +344,27 @@ app.get('/get-otp', authLimiter, bruteForceProtection, async (req, res) => {
   // Clear failed attempts on success
   clearFailedAttempts(ip);
   
-  const tempToken = generateTempToken(username, session_id);
+  // Extract 'i' value from Location header
+  let iValue = null;
+  const locationHeader = result.response.request.res.responseUrl || result.response.headers['location'] || result.response.headers['Location'];
+  
+  if (locationHeader) {
+     const urlParts = locationHeader.split('?');
+     if (urlParts.length > 1) {
+       const queryParams = qs.parse(urlParts[1]);
+       if (queryParams.i) {
+         iValue = queryParams.i;
+       }
+     }
+  }
+
+  // Fallback: check if 'i' is in the body scripts (sometimes it's redirected via JS)
+  if (!iValue) {
+      // Logic to find 'i' in body if needed, but user specified header. 
+      // We will leave it as null if not found, and handle fallback in login.
+  }
+
+  const tempToken = generateTempToken(username, session_id, iValue);
   res.json({ ...responsePayload, temp_token: tempToken });
 });
 
@@ -379,6 +399,8 @@ app.get('/login', authLimiter, bruteForceProtection, async (req, res) => {
     return res.status(401).json({ error: 'Session mismatch' });
   }
 
+
+
   const result = await erpRequest({
     method: 'POST',
     url: '/studentportal/loginManager/youLoginv.jsp',
@@ -387,11 +409,17 @@ app.get('/login', authLimiter, bruteForceProtection, async (req, res) => {
       'cookie': `JSESSIONID=${session_id}`,
       'referer': `${BASE_URL}/studentportal/loginManager/youLoginv.jsp`
     },
-    data: `otppasswd=${otp}&txtPageAction=1&OtpPassWord=${otp}&txtSK=&txtAN=&_tries=1&_md5=&txtPageAction=0&i=BZyGQDSd0w8%252ByDkrCquu2s19awDWOaKo2TxKflonY%252BmN7ixz3XkybvBDD3Lls1ofddAi3ue1u0myg2vnCJPgqML%252Bp8%252BDI3TkBIZ1BnBUKV3KLs5508fkEj3Sm%252BRbHOlO`
+    data: `otppasswd=${otp}&txtPageAction=1&OtpPassWord=${otp}&txtSK=&txtAN=&_tries=1&_md5=&txtPageAction=0&i=${encodeURIComponent(encodeURIComponent(tempData.iValue))}`
   });
 
+  if (!result.success) {
+    trackFailedAttempt(ip);
+    console.error('[ERP Login Error]', result.error?.message);
+    return res.status(502).json({ error: 'ERP login request failed. Please try again.' });
+  }
+
   const is200 = result.success && result.response.status === 200;
-  const responseData = result.response.data.toString();
+  const responseData = result.response.data ? result.response.data.toString() : '';
   const isVerified = is200 && responseData.includes('Please wait login screen is loading...');
 
   if (!isVerified) {
