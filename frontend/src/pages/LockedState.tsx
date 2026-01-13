@@ -35,7 +35,7 @@ export default function LockedState() {
 
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
             <Shield className="w-4 h-4" />
-            <span className="text-xs font-mono">CONSENSUS PROTOCOL</span>
+            <span className="text-xs font-mono">GROUPIFY PROTOCOL</span>
           </div>
         </div>
       </div>

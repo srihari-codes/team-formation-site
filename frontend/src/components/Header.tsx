@@ -16,7 +16,7 @@ export function Header({ username, batch, onLogout, showLogout = true }: HeaderP
         <div className="flex items-center gap-3">
           <Shield className="w-5 h-5 text-primary" />
           <span className="font-mono text-sm font-semibold tracking-wide">
-            CONSENSUS
+            GROUPIFY
           </span>
         </div>
 

@@ -30,7 +30,7 @@ const Home = () => {
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           <div className="flex items-center gap-2">
             <ShieldAlert className="w-5 h-5 text-primary" />
-            <span className="font-mono text-sm font-bold tracking-tighter">CONSENSUS</span>
+            <span className="font-mono text-sm font-bold tracking-tighter uppercase">Groupify</span>
           </div>
           <Link to="/login">
             <CyberButton variant="ghost" size="sm" className="font-mono text-xs">
@@ -51,7 +51,7 @@ const Home = () => {
                 SYSTEM STATUS: ACTIVE // BATCH ISOLATION ENABLED
               </div>
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground cyber-text-glow leading-tight font-mono">
-                Team Formation<br/><span className="text-primary/90">Protocol V2.0</span>
+                Groupify<br/><span className="text-primary/90">Protocol V2.0</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto backdrop-blur-sm p-2 rounded-lg leading-relaxed">
                 A secure system where teams form only through <span className="text-foreground font-semibold">mutual consensus</span>. 

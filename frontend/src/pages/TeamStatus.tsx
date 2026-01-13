@@ -109,7 +109,7 @@ export default function TeamStatusPage() {
                       Mutual selection confirmed
                     </p>
                   </div>
-                  <StatusIndicator status="success" label="CONSENSUS ACHIEVED" className="justify-center" />
+                  <StatusIndicator status="success" label="GROUPIFIED" className="justify-center" />
                 </CyberCardContent>
               </CyberCard>
 
@@ -142,7 +142,7 @@ export default function TeamStatusPage() {
                     <Clock className="w-8 h-8 text-warning" />
                   </div>
                   <div>
-                    <h2 className="font-mono text-xl font-bold">Awaiting Consensus</h2>
+                    <h2 className="font-mono text-xl font-bold">Awaiting Match</h2>
                     <p className="text-sm text-muted-foreground mt-1">
                       Team formation in progress
                     </p>

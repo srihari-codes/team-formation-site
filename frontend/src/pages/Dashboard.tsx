@@ -115,7 +115,7 @@ export default function Dashboard() {
                   {isLocked 
                     ? "Selection Locked" 
                     : hasChoices 
-                      ? "Waiting for Consensus" 
+                      ? "Awaiting Team Match" 
                       : "Ready to Select"}
                 </span>
               </div>

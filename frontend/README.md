@@ -1,4 +1,4 @@
-# Consensus Hub
+# Groupify
 
 A secure mutual-consent team allocation system for college students. Form teams through consensus-based selection.
 

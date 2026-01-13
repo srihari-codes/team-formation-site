@@ -96,7 +96,7 @@ export default function ForgotPassword() {
               <Shield className="w-8 h-8 text-primary" />
             </div>
             <h1 className="font-mono text-xl font-bold tracking-wide">
-              CONSENSUS PROTOCOL
+              GROUPIFY PROTOCOL
             </h1>
             <p className="text-sm text-muted-foreground">
               Password Recovery Sequence
