@@ -235,6 +235,83 @@ async function getExportData(batch) {
   return data;
 }
 
+/**
+ * Admin: Get dashboard data (Students with prefs + current teams)
+ */
+async function getAdminDashboardData(batch) {
+  const [students, preferences, teams] = await Promise.all([
+    Student.find({ batch }).select('rollNo name teamId editAttemptsLeft'),
+    Preference.find({ batch }).select('rollNo choices'),
+    Team.find({ batch }).sort({ createdAt: -1 })
+  ]);
+
+  const prefMap = preferences.reduce((acc, p) => {
+    acc[p.rollNo] = p.choices;
+    return acc;
+  }, {});
+
+  const studentsWithPrefs = students.map(s => ({
+    rollNo: s.rollNo,
+    name: s.name,
+    teamId: s.teamId,
+    editAttemptsLeft: s.editAttemptsLeft,
+    choices: prefMap[s.rollNo] || []
+  }));
+
+  return {
+    students: studentsWithPrefs,
+    teams: teams
+  };
+}
+
+/**
+ * Admin: Manually create a team (Bypass mutual consent)
+ */
+async function manualCreateTeam(batch, members) {
+  if (!Array.isArray(members) || members.length < 1 || members.length > 3) {
+    throw { code: 400, message: 'Team must have 1-3 members' };
+  }
+
+  const students = await Student.find({ rollNo: { $in: members } });
+  if (students.length !== members.length) {
+    throw { code: 404, message: 'One or more students not found' };
+  }
+
+  for (const s of students) {
+    if (s.batch !== batch) throw { code: 400, message: 'Cross-batch selection not allowed' };
+    if (s.teamId) throw { code: 400, message: `${s.rollNo} is already in a team` };
+  }
+
+  const team = await Team.create({ batch, members });
+
+  await Student.updateMany(
+    { rollNo: { $in: members } },
+    { $set: { teamId: team._id } }
+  );
+
+  // Cleanup preferences
+  await Preference.deleteMany({ rollNo: { $in: members } });
+
+  return team;
+}
+
+/**
+ * Admin: Dissolve a team
+ */
+async function dissolveTeam(teamId) {
+  const team = await Team.findById(teamId);
+  if (!team) throw { code: 404, message: 'Team not found' };
+
+  await Student.updateMany(
+    { teamId: team._id },
+    { $set: { teamId: null } }
+  );
+
+  await Team.findByIdAndDelete(teamId);
+
+  return { success: true };
+}
+
 module.exports = {
   isSelectionOpen,
   tryFormTeam,
@@ -244,5 +321,8 @@ module.exports = {
   closeSelection,
   openSelection,
   finalizeTeams,
-  getExportData
+  getExportData,
+  getAdminDashboardData,
+  manualCreateTeam,
+  dissolveTeam
 };

@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const XLSX = require('xlsx');
 
 const { Student, Preference, Team, Settings } = require('./models');
-const { getStudentsByBatch, savePreference, getTeamStatus, finalizeTeams, closeSelection, openSelection, isSelectionOpen, getExportData } = require('./teamLogic');
+const { getStudentsByBatch, savePreference, getTeamStatus, finalizeTeams, closeSelection, openSelection, isSelectionOpen, getExportData, getAdminDashboardData, manualCreateTeam, dissolveTeam } = require('./teamLogic');
 
 // Import security middleware
 const {
@@ -643,6 +643,42 @@ app.get('/admin/selection/status', adminMiddleware, adminLimiter, async (req, re
     isSelectionOpen('B')
   ]);
   res.json({ A: { selectionOpen: batchA }, B: { selectionOpen: batchB } });
+});
+
+app.get('/admin/dashboard', adminMiddleware, adminLimiter, async (req, res) => {
+  const { batch } = req.query;
+  if (!batch || !isValidBatch(batch)) {
+    return res.status(400).json({ error: 'Valid batch (A or B) required' });
+  }
+  try {
+    const data = await getAdminDashboardData(batch);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Dashboard fetch failed' });
+  }
+});
+
+app.post('/admin/team/manual', adminMiddleware, adminLimiter, async (req, res) => {
+  const { batch, members } = req.body;
+  if (!batch || !isValidBatch(batch)) {
+    return res.status(400).json({ error: 'Valid batch (A or B) required' });
+  }
+  try {
+    const team = await manualCreateTeam(batch, members);
+    res.json(team);
+  } catch (err) {
+    res.status(err.code || 500).json({ error: err.message || 'Manual creation failed' });
+  }
+});
+
+app.delete('/admin/team/:teamId', adminMiddleware, adminLimiter, async (req, res) => {
+  const { teamId } = req.params;
+  try {
+    const result = await dissolveTeam(teamId);
+    res.json(result);
+  } catch (err) {
+    res.status(err.code || 500).json({ error: err.message || 'Dissolution failed' });
+  }
 });
 
 // ==================== ERROR HANDLING ====================
