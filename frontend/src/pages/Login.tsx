@@ -39,7 +39,6 @@ export default function Login() {
 
   const fetchSession = useCallback(async () => {
     setCaptchaLoading(true);
-    setError(null);
     try {
       const res = await fetch(`${API_BASE_URL}/get-session`);
       const data = await res.json();
