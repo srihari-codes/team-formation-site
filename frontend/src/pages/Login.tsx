@@ -1,10 +1,22 @@
 import { toast } from "sonner";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Shield, Eye, EyeOff, RefreshCw, AlertCircle, AlertTriangle } from "lucide-react";
+import {
+  Shield,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  AlertCircle,
+  AlertTriangle,
+} from "lucide-react";
 import { CyberButton } from "@/components/ui/cyber-button";
 import { CyberInput } from "@/components/ui/cyber-input";
-import { CyberCard, CyberCardContent, CyberCardHeader, CyberCardTitle } from "@/components/ui/cyber-card";
+import {
+  CyberCard,
+  CyberCardContent,
+  CyberCardHeader,
+  CyberCardTitle,
+} from "@/components/ui/cyber-card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { SplineBackground } from "@/components/SplineBackground";
 import { API_BASE_URL } from "@/config/api";
@@ -15,16 +27,16 @@ type AuthStep = "credentials" | "otp";
 export default function Login() {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
-  
+
   const [step, setStep] = useState<AuthStep>("credentials");
   const [sessionId, setSessionId] = useState<string>("");
   const [tempToken, setTempToken] = useState<string>("");
-  
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [captcha, setCaptcha] = useState("");
   const [otp, setOtp] = useState("");
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +56,7 @@ export default function Login() {
       const data = await res.json();
       if (data.session_id) {
         setSessionId(data.session_id);
-        setCaptchaKey(prev => prev + 1);
+        setCaptchaKey((prev) => prev + 1);
       } else {
         setError("Failed to initialize session");
       }
@@ -76,7 +88,7 @@ export default function Login() {
         password,
         captcha,
       });
-      
+
       const res = await fetch(`${API_BASE_URL}/get-otp?${params}`);
       const data = await res.json();
 
@@ -85,27 +97,32 @@ export default function Login() {
         toast.error(data.error);
         await fetchSession();
       } else if (!data.human) {
-        const msg = "CAPTCHA ERROR: Verification failed. Please enter the correct characters from the image.";
+        const msg =
+          "CAPTCHA ERROR: Verification failed. Please enter the correct characters from the image.";
         setError(msg);
         toast.error(msg);
         setCaptcha("");
         await fetchSession();
       } else if (!data.credential) {
-        const msg = "CREDENTIAL ERROR: Unauthorized access. The Roll Number or Password provided is incorrect.";
+        const msg =
+          "CREDENTIAL ERROR: Unauthorized access. The Roll Number or Password provided is incorrect.";
         setError(msg);
         toast.error(msg, {
           duration: 5000,
         });
         await fetchSession();
       } else if (data.success === false) {
-        const msg = "UNEXPECTED ERROR: The server encountered an issue while processing your request.";
+        const msg =
+          "UNEXPECTED ERROR: The server encountered an issue while processing your request.";
         setError(msg);
         toast.error(msg);
         await fetchSession();
       } else if (data.success && data.temp_token) {
         setTempToken(data.temp_token);
         setStep("otp");
-        toast.success("Identity verified. Please enter the OTP sent to your device.");
+        toast.success(
+          "Identity verified. Please enter the OTP sent to your device."
+        );
       } else {
         const msg = "UNEXPECTED ERROR: Failed to proceed to the next step.";
         setError(msg);
@@ -135,7 +152,7 @@ export default function Login() {
         otp,
         temp_token: tempToken,
       });
-      
+
       const res = await fetch(`${API_BASE_URL}/login?${params}`);
       const data = await res.json();
 
@@ -143,12 +160,14 @@ export default function Login() {
         setError(data.error);
         toast.error(data.error);
       } else if (data.verified === false) {
-        const msg = "OTP ERROR: The verification code entered is incorrect. Please try again.";
+        const msg =
+          "OTP ERROR: The verification code entered is incorrect. Please try again.";
         setError(msg);
         toast.error(msg);
         setOtp("");
       } else if (data.success === false) {
-        const msg = "UNEXPECTED ERROR: Verification processing failed on the server.";
+        const msg =
+          "UNEXPECTED ERROR: Verification processing failed on the server.";
         setError(msg);
         toast.error(msg);
       } else if (data.access_token) {
@@ -169,11 +188,11 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-background grid-pattern relative">
-      <SplineBackground 
-        sceneUrl="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" 
+      <SplineBackground
+        sceneUrl="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode"
         className="opacity-20"
       />
-      
+
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-sm space-y-6">
           {/* Logo */}
@@ -206,7 +225,7 @@ export default function Login() {
                     disabled={loading}
                     autoComplete="username"
                   />
-                  
+
                   <div className="relative">
                     <CyberInput
                       label="ERP Password"
@@ -222,7 +241,11 @@ export default function Login() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-8 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
 
@@ -242,7 +265,9 @@ export default function Login() {
                             className="h-full object-contain"
                           />
                         ) : (
-                          <span className="text-xs text-muted-foreground">Loading...</span>
+                          <span className="text-xs text-muted-foreground">
+                            Loading...
+                          </span>
                         )}
                       </div>
                       <CyberButton
@@ -252,7 +277,11 @@ export default function Login() {
                         onClick={fetchSession}
                         disabled={captchaLoading}
                       >
-                        <RefreshCw className={`w-4 h-4 ${captchaLoading ? 'animate-spin' : ''}`} />
+                        <RefreshCw
+                          className={`w-4 h-4 ${
+                            captchaLoading ? "animate-spin" : ""
+                          }`}
+                        />
                       </CyberButton>
                     </div>
                     <CyberInput
@@ -270,11 +299,7 @@ export default function Login() {
                     size="lg"
                     disabled={loading || !sessionId}
                   >
-                    {loading ? (
-                      <LoadingSpinner size="sm" />
-                    ) : (
-                      "Request OTP"
-                    )}
+                    {loading ? <LoadingSpinner size="sm" /> : "Request OTP"}
                   </CyberButton>
 
                   {error && (
@@ -296,12 +321,14 @@ export default function Login() {
                   <p className="text-sm text-muted-foreground">
                     OTP sent to your registered mobile number.
                   </p>
-                  
+
                   <CyberInput
                     label="OTP Code"
                     placeholder="XXXXXXX"
                     value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 7))}
+                    onChange={(e) =>
+                      setOtp(e.target.value.replace(/\D/g, "").slice(0, 7))
+                    }
                     disabled={loading}
                     className="font-mono tracking-[0.5em] text-center text-lg"
                     maxLength={7}
@@ -313,11 +340,7 @@ export default function Login() {
                     size="lg"
                     disabled={loading || otp.length !== 7}
                   >
-                    {loading ? (
-                      <LoadingSpinner size="sm" />
-                    ) : (
-                      "Verify & Login"
-                    )}
+                    {loading ? <LoadingSpinner size="sm" /> : "Verify & Login"}
                   </CyberButton>
 
                   {error && (
