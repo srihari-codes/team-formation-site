@@ -15,6 +15,8 @@ export interface OtpResponse {
 export interface LoginResponse {
   verified: boolean;
   success: boolean;
+  wrong_otp?: boolean;
+  last_three_digits?: string | null;
   access_token?: string;
   username?: string;
   batch?: "A" | "B";

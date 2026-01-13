@@ -391,10 +391,18 @@ app.get('/login', authLimiter, bruteForceProtection, async (req, res) => {
   });
 
   const is200 = result.success && result.response.status === 200;
-  const isVerified = is200 && result.response.data.toString().includes('Please wait login screen is loading...');
+  const responseData = result.response.data.toString();
+  const isVerified = is200 && responseData.includes('Please wait login screen is loading...');
 
   if (!isVerified) {
     trackFailedAttempt(ip);
+
+    if (responseData.includes('Login failed')) {
+      const match = responseData.match(/\*+\s*(\d{3})/);
+      const lastThreeDigits = match ? match[1] : null;
+      return res.status(401).json({ verified: false, wrong_otp: true, last_three_digits: lastThreeDigits });
+    }
+
     return res.status(401).json({ verified: false });
   }
 

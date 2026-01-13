@@ -160,8 +160,12 @@ export default function Login() {
         setError(data.error);
         toast.error(data.error);
       } else if (data.verified === false) {
-        const msg =
-          "OTP ERROR: The verification code entered is incorrect. Please try again.";
+        let msg = "OTP ERROR: The verification code entered is incorrect. Please try again.";
+        
+        if (data.wrong_otp && data.last_three_digits) {
+          msg = `OTP ERROR: Incorrect code. Please check the SMS sent to your mobile ending in ***${data.last_three_digits}.`;
+        }
+        
         setError(msg);
         toast.error(msg);
         setOtp("");
