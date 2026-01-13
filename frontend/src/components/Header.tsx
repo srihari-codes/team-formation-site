@@ -1,6 +1,7 @@
-import { Shield, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { CyberButton } from "@/components/ui/cyber-button";
 import { StatusIndicator } from "@/components/ui/status-indicator";
+import { GROUPIFY_LOGO } from "@/config/assets";
 
 interface HeaderProps {
   username?: string | null;
@@ -14,7 +15,7 @@ export function Header({ username, batch, onLogout, showLogout = true }: HeaderP
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center gap-3">
-          <Shield className="w-5 h-5 text-primary" />
+          <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-8 h-8 object-contain" />
           <span className="font-mono text-sm font-semibold tracking-wide">
             GROUPIFY
           </span>

@@ -21,6 +21,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { SplineBackground } from "@/components/SplineBackground";
 import { API_BASE_URL } from "@/config/api";
 import { useAuth } from "@/hooks/useAuth";
+import { GROUPIFY_LOGO } from "@/config/assets";
 
 type AuthStep = "credentials" | "otp";
 
@@ -201,8 +202,8 @@ export default function Login() {
         <div className="w-full max-w-sm space-y-6">
           {/* Logo */}
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-lg bg-primary/10 border border-primary/30 cyber-glow">
-              <Shield className="w-8 h-8 text-primary" />
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-lg bg-primary/10 border border-primary/30 cyber-glow">
+              <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-12 h-12 object-contain" />
             </div>
             <h1 className="font-mono text-xl font-bold tracking-wide">
               GROUPIFY PROTOCOL

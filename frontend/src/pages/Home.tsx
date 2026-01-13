@@ -8,6 +8,7 @@ import {
   CyberCardTitle,
 } from "@/components/ui/cyber-card";
 import { SplineBackground } from "@/components/SplineBackground";
+import { GROUPIFY_LOGO } from "@/config/assets";
 import {
   Users,
   ShieldAlert,
@@ -29,7 +30,7 @@ const Home = () => {
       <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-background/60 backdrop-blur-lg">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 text-primary" />
+            <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-8 h-8 object-contain" />
             <span className="font-mono text-sm font-bold tracking-tighter uppercase">Groupify</span>
           </div>
           <Link to="/login">
@@ -189,11 +190,11 @@ const Home = () => {
           <section className="pt-8">
             <CyberCard variant="glow" className="bg-secondary/40 border-primary/10 backdrop-blur-md relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <ShieldAlert className="w-24 h-24" />
+                <img src={GROUPIFY_LOGO} alt="" className="w-24 h-24 object-contain" />
               </div>
               <CyberCardContent className="p-8 space-y-6">
                 <h3 className="flex items-center gap-2 text-warning font-bold font-mono tracking-tighter">
-                  <ShieldAlert className="w-5 h-5" />
+                  <img src={GROUPIFY_LOGO} alt="" className="w-5 h-5 object-contain" />
                   CRITICAL CONSTRAINTS
                 </h3>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-foreground/80">

@@ -1,7 +1,8 @@
-import { Shield, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { CyberCard, CyberCardContent } from "@/components/ui/cyber-card";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { SplineBackground } from "@/components/SplineBackground";
+import { GROUPIFY_LOGO } from "@/config/assets";
 
 export default function LockedState() {
   return (
@@ -33,7 +34,7 @@ export default function LockedState() {
           </CyberCard>
 
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
-            <Shield className="w-4 h-4" />
+            <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-6 h-6 object-contain opacity-50" />
             <span className="text-xs font-mono">GROUPIFY PROTOCOL</span>
           </div>
         </div>

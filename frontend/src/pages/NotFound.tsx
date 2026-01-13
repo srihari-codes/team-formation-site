@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Shield, Home } from "lucide-react";
+import { Home } from "lucide-react";
 import { CyberButton } from "@/components/ui/cyber-button";
+import { GROUPIFY_LOGO } from "@/config/assets";
 import { CyberCard, CyberCardContent } from "@/components/ui/cyber-card";
 
 const NotFound = () => {
@@ -33,7 +34,7 @@ const NotFound = () => {
         </CyberCard>
 
         <div className="flex items-center justify-center gap-2 text-muted-foreground">
-          <Shield className="w-4 h-4" />
+          <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-6 h-6 object-contain opacity-50" />
           <span className="text-xs font-mono">GROUPIFY PROTOCOL</span>
         </div>
       </div>
