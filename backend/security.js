@@ -3,7 +3,7 @@
  * Comprehensive security hardening for production deployment
  */
 
-const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
+const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -13,73 +13,114 @@ const mongoSanitize = require('mongo-sanitize');
 // ==================== RATE LIMITING ====================
 
 /**
+ * Rate Limit Configuration
+ * 
+ * RATE_LIMIT_LEVEL controls all rate limits across the server:
+ * - Level 1: Most restrictive (base limits)
+ * - Level 5: Moderate (5x base limits) - recommended for development
+ * - Level 10: Most lenient (10x base limits)
+ * 
+ * Base limits (at level 1):
+ * - Global: 10 requests per 15 min
+ * - Auth: 2 requests per 15 min
+ * - Captcha: 5 requests per 15 min
+ * - Admin: 5 requests per 15 min
+ * - Selection: 2 requests per hour
+ * - Speed delay after: 5 requests
+ */
+const RATE_LIMIT_LEVEL = Math.min(10, Math.max(1, parseInt(process.env.RATE_LIMIT_LEVEL, 10) || 5));
+
+// Base rate limits (multiplied by RATE_LIMIT_LEVEL)
+const BASE_LIMITS = {
+  global: 10,      // Base: 10 req/15min → at level 10: 100 req/15min
+  auth: 2,         // Base: 2 req/15min → at level 10: 20 req/15min
+  captcha: 5,      // Base: 5 req/15min → at level 10: 50 req/15min
+  admin: 5,        // Base: 5 req/15min → at level 10: 50 req/15min
+  selection: 2,    // Base: 2 req/hour → at level 10: 20 req/hour
+  speedDelay: 5    // Base: delay after 5 req → at level 10: after 50 req
+};
+
+// Calculate actual limits based on level
+const LIMITS = {
+  global: BASE_LIMITS.global * RATE_LIMIT_LEVEL,
+  auth: BASE_LIMITS.auth * RATE_LIMIT_LEVEL,
+  captcha: BASE_LIMITS.captcha * RATE_LIMIT_LEVEL,
+  admin: BASE_LIMITS.admin * RATE_LIMIT_LEVEL,
+  selection: BASE_LIMITS.selection * RATE_LIMIT_LEVEL,
+  speedDelay: BASE_LIMITS.speedDelay * RATE_LIMIT_LEVEL
+};
+
+// Log the active rate limits on startup
+console.log(`🛡️  Rate limiting active (Level ${RATE_LIMIT_LEVEL}/10):`);
+console.log(`   Global: ${LIMITS.global} req/15min | Auth: ${LIMITS.auth} req/15min`);
+console.log(`   Captcha: ${LIMITS.captcha} req/15min | Admin: ${LIMITS.admin} req/15min`);
+console.log(`   Selection: ${LIMITS.selection} req/hour | Speed delay after: ${LIMITS.speedDelay} req`);
+
+// Common keyGenerator function for rate limiters
+const ipKeyGenerator = (req) => {
+  const forwardedFor = req.headers['x-forwarded-for']?.split(',')[0]?.trim();
+  return forwardedFor || req.ip;
+};
+
+/**
  * Global rate limiter - applies to all routes
- * 100 requests per 15 minutes per IP
  */
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: LIMITS.global,
   message: { error: 'Too many requests, please try again later.' },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  skipFailedRequests: false, // Count failed requests
-  keyGenerator: (req) => {
-    // Use X-Forwarded-For if behind proxy, otherwise use the ipKeyGenerator helper
-    const forwardedFor = req.headers['x-forwarded-for']?.split(',')[0]?.trim();
-    return forwardedFor || ipKeyGenerator(req);
-  }
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipFailedRequests: false,
+  keyGenerator: ipKeyGenerator
 });
 
 /**
  * Auth routes limiter - stricter for login/OTP endpoints
- * 5 requests per 15 minutes per IP
  */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10, // Very strict for auth endpoints
+  max: LIMITS.auth,
   message: { error: 'Too many authentication attempts. Please try again after 15 minutes.' },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    const forwardedFor = req.headers['x-forwarded-for']?.split(',')[0]?.trim();
-    return forwardedFor || ipKeyGenerator(req);
-  }
+  keyGenerator: ipKeyGenerator
 });
 
 /**
  * Captcha endpoint limiter - prevent captcha farming
- * 20 requests per 15 minutes
  */
 const captchaLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: LIMITS.captcha,
   message: { error: 'Too many captcha requests. Please try again later.' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: ipKeyGenerator
 });
 
 /**
  * Admin routes limiter - extra protection
- * 30 requests per 15 minutes
  */
 const adminLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30,
+  max: LIMITS.admin,
   message: { error: 'Too many admin requests. Please slow down.' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: ipKeyGenerator
 });
 
 /**
  * Team selection limiter - prevent spam
- * 10 requests per hour (since they have 2 edit attempts anyway)
  */
 const selectionLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10,
+  max: LIMITS.selection,
   message: { error: 'Too many selection attempts. Slow down!' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: ipKeyGenerator
 });
 
 /**
@@ -87,9 +128,10 @@ const selectionLimiter = rateLimit({
  */
 const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000,
-  delayAfter: 50, // Allow 50 requests per 15 mins without delay
-  delayMs: (hits) => hits * 100, // Add 100ms delay per request after limit
-  maxDelayMs: 5000 // Max delay of 5 seconds
+  delayAfter: LIMITS.speedDelay,
+  delayMs: (hits) => hits * 100,
+  maxDelayMs: 5000,
+  keyGenerator: ipKeyGenerator
 });
 
 // ==================== INPUT SANITIZATION ====================
