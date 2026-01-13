@@ -107,7 +107,7 @@ export default function Login() {
         await fetchSession();
       } else if (!data.credential) {
         const msg =
-          "CREDENTIAL ERROR: Unauthorized access. The Roll Number or Password provided is incorrect.";
+          "CREDENTIAL ERROR: Unauthorized access. The Register Number or Password provided is incorrect.";
         setError(msg);
         toast.error(msg, {
           duration: 5000,
@@ -207,16 +207,16 @@ export default function Login() {
               <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-12 h-12 object-contain" />
             </div>
             <h1 className="font-mono text-xl font-bold tracking-wide">
-              GROUPIFY PROTOCOL
+              GROUPIFY
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Secure Team Formation System
+            <p className="text-[12px] text-primary font-bold tracking-[0.2em] uppercase cyber-text-glow">
+              Use your ERP-SRM credentials to login
             </p>
           </div>
 
           <CyberCard variant="glow">
             <CyberCardHeader>
-              <CyberCardTitle>
+              <CyberCardTitle className="text-center">
                 {step === "credentials" ? "AUTHENTICATE" : "VERIFY OTP"}
               </CyberCardTitle>
             </CyberCardHeader>
@@ -224,7 +224,7 @@ export default function Login() {
               {step === "credentials" ? (
                 <form onSubmit={handleSubmitCredentials} className="space-y-4">
                   <CyberInput
-                    label="Roll Number"
+                    label="Register Number"
                     placeholder="142223128XXX"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -389,10 +389,6 @@ export default function Login() {
               )}
             </CyberCardContent>
           </CyberCard>
-
-          <p className="text-xs text-center text-muted-foreground font-mono">
-            Use your ERP credentials to authenticate
-          </p>
         </div>
         <Footer />
       </div>

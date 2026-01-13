@@ -97,22 +97,20 @@ export default function ForgotPassword() {
               <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-12 h-12 object-contain" />
             </div>
             <h1 className="font-mono text-xl font-bold tracking-wide">
-              GROUPIFY PROTOCOL
+              GROUPIFY
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Password Recovery Sequence
-            </p>
           </div>
 
           <CyberCard variant="glow">
             <CyberCardHeader>
-              <CyberCardTitle>FORGOT PASSWORD</CyberCardTitle>
+              <CyberCardTitle className="text-center">FORGOT PASSWORD</CyberCardTitle>
             </CyberCardHeader>
             <CyberCardContent>
               {!result || result.status === "error" ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Enter your registered email address to receive password reset instructions.
+                    Enter your registered email address to get new Password. <br />
+                    (The email submitted at the time of college enrollment.)
                   </p>
 
                   <div className="relative">
@@ -148,7 +146,7 @@ export default function ForgotPassword() {
                     size="lg"
                     disabled={loading}
                   >
-                    {loading ? <LoadingSpinner size="sm" /> : "Send Reset Link"}
+                    {loading ? <LoadingSpinner size="sm" /> : "Reset Password"}
                   </CyberButton>
                 </form>
               ) : (
