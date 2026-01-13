@@ -12,8 +12,8 @@ interface HeaderProps {
 
 export function Header({ username, batch, onLogout, showLogout = true }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/60 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
+      <div className="container max-w-7xl flex h-14 items-center justify-between">
         <div className="flex items-center gap-3">
           <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-8 h-8 object-contain" />
           <span className="font-mono text-sm font-semibold tracking-wide">
@@ -39,7 +39,7 @@ export function Header({ username, batch, onLogout, showLogout = true }: HeaderP
           {showLogout && onLogout && (
             <CyberButton variant="ghost" size="sm" onClick={onLogout}>
               <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Exit</span>
+              <span className="hidden sm:inline">Logout</span>
             </CyberButton>
           )}
         </div>

@@ -80,7 +80,8 @@ export default function TeamStatusPage() {
       <div className="relative z-10">
         <Header username={name || username} batch={batch} onLogout={handleLogout} />
         
-        <main className="container py-6 space-y-6">
+        <main className="flex-1">
+          <div className="container max-w-4xl py-6 space-y-6">
           {/* Back Button */}
           {!isFormed && (
             <CyberButton variant="ghost" onClick={() => navigate("/me")}>
@@ -117,7 +118,7 @@ export default function TeamStatusPage() {
                 <CyberCardTitle>Team Members</CyberCardTitle>
               </CyberCardHeader>
               
-              <div className="grid gap-3">
+              <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
                 {status.team?.map((rollNo) => (
                   <TeamMemberCard
                     key={rollNo}
@@ -163,7 +164,7 @@ export default function TeamStatusPage() {
                 </p>
               </div>
 
-              <div className="grid gap-3">
+              <div className="grid gap-3 max-w-md mx-auto w-full pt-4">
                 <CyberButton
                   variant="secondary"
                   className="w-full"
@@ -190,6 +191,7 @@ export default function TeamStatusPage() {
               </div>
             </div>
           )}
+          </div>
         </main>
         <Footer />
       </div>

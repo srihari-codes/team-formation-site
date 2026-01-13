@@ -20,7 +20,7 @@ export function SplineBackground({ sceneUrl = SPLINE_SCENE_URL, className = "" }
   }
 
   return (
-    <div className={`absolute inset-0 pointer-events-none overflow-hidden ${className}`}>
+    <div className={`fixed inset-0 pointer-events-none overflow-hidden ${className}`}>
       <Suspense fallback={null}>
         <div 
           className={`w-full h-full transition-opacity duration-1000 ${loaded ? 'opacity-100' : 'opacity-0'}`}

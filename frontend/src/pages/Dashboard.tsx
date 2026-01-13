@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, ArrowRight, Lock, Edit3 } from "lucide-react";
+import { Users, ArrowRight, Lock, Edit3, Info } from "lucide-react";
 import { Header } from "@/components/Header";
 import { CyberButton } from "@/components/ui/cyber-button";
 import { CyberCard, CyberCardContent, CyberCardHeader, CyberCardTitle } from "@/components/ui/cyber-card";
@@ -103,7 +103,8 @@ export default function Dashboard() {
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header username={name || username} batch={batch} onLogout={handleLogout} />
         
-        <main className="container py-6 space-y-6">
+        <main className="flex-1">
+          <div className="container max-w-4xl py-6 space-y-6">
           {/* Status Banner */}
           <CyberCard variant="glow">
             <CyberCardContent className="flex items-center justify-between">
@@ -184,7 +185,7 @@ export default function Dashboard() {
           )}
 
           {/* Action Button */}
-          <div className="space-y-3">
+          <div className="space-y-3 max-w-md mx-auto w-full pt-4">
             {isLocked ? (
               <CyberCard variant="default">
                 <CyberCardContent className="flex items-center justify-center gap-3 py-6">
@@ -225,11 +226,17 @@ export default function Dashboard() {
           </div>
 
           {/* Info */}
-          <div className="p-4 rounded-md bg-muted/30 border border-border">
-            <p className="text-xs font-mono text-muted-foreground leading-relaxed">
-              Select exactly 2 teammates from your batch. A team forms only when all 3 members 
-              mutually select each other. You have {profile?.editAttemptsLeft} edit attempt(s) remaining.
-            </p>
+          <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 cyber-glow-sm relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
+            <div className="flex gap-3">
+              <Info className="w-5 h-5 text-primary flex-shrink-0" />
+              <p className="text-sm font-mono text-foreground leading-relaxed">
+                <span className="text-primary font-bold">Protocol:</span> Select exactly <span className="text-primary font-bold underline decoration-primary/30 underline-offset-4">2 teammates</span> from your batch. 
+                A team forms only when all 3 members <span className="italic text-primary/80">mutually select each other</span>. 
+                You have <span className="px-1.5 py-0.5 rounded bg-primary/20 text-primary font-bold border border-primary/20">{profile?.editAttemptsLeft}</span> edit attempt(s) remaining.
+              </p>
+            </div>
+          </div>
           </div>
         </main>
         <Footer />

@@ -159,34 +159,38 @@ export default function TeamSelection() {
       <div className="relative z-10">
         <Header username={name || username} batch={batch} onLogout={handleLogout} />
         
-        <main className="container py-6 space-y-4 pb-24">
+        <main className="flex-1">
+          <div className="container max-w-5xl py-6 space-y-6 pb-24">
           {/* Back Button */}
           <CyberButton variant="ghost" onClick={() => navigate("/me")}>
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </CyberButton>
 
-          {/* Instructions Card */}
-          <CyberCard variant="default">
-            <CyberCardContent className="space-y-2">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <p className="font-mono text-sm font-medium">
-                    {isEditMode ? "Update Your Team Selection" : "Select Your Teammates"}
-                  </p>
-                  <ul className="text-xs text-muted-foreground space-y-1">
-                    <li>• <strong>Tap a student</strong> to select them as a teammate</li>
-                    <li>• <strong>Tap again</strong> to remove them from selection</li>
-                    <li>• Select exactly <strong>2 teammates</strong>, then submit</li>
-                    {isEditMode && (
-                      <li className="text-warning">• You have {profile?.editAttemptsLeft} edit attempt(s) remaining</li>
-                    )}
-                  </ul>
-                </div>
+          {/* Instructions Box */}
+          <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 cyber-glow-sm relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
+            <div className="flex gap-3">
+              <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+              <div className="space-y-2">
+                <p className="font-mono text-sm font-bold text-foreground capitalize">
+                  {isEditMode ? "Protocol: Update Team Selection" : "Protocol: Teammate Selection"}
+                </p>
+                <ul className="text-xs font-mono text-foreground/80 space-y-1.5">
+                  <li><span className="text-primary">01.</span> Tap a student card to <span className="text-primary font-bold">ADD</span> to selection.</li>
+                  <li><span className="text-primary">02.</span> Tap again to <span className="text-primary font-bold">REMOVE</span> from selection.</li>
+                  <li><span className="text-primary">03.</span> Select exactly <span className="text-primary font-bold underline underline-offset-2">2 teammates</span> to proceed.</li>
+                </ul>
+                {isEditMode && (
+                  <div className="pt-1">
+                    <span className="px-2 py-0.5 rounded bg-warning/20 text-warning text-[10px] font-bold border border-warning/20 uppercase tracking-wider">
+                      {profile?.editAttemptsLeft} Attempts Remaining
+                    </span>
+                  </div>
+                )}
               </div>
-            </CyberCardContent>
-          </CyberCard>
+            </div>
+          </div>
 
           {/* Selected Teammates Section */}
           <CyberCard variant={selectedRolls.length === 2 ? "glow" : "default"}>
@@ -202,7 +206,7 @@ export default function TeamSelection() {
                   No teammates selected yet. Tap on students below to select them.
                 </p>
               ) : (
-                <div className="space-y-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {selectedRolls.map((rollNo, index) => {
                     const student = students.find(s => s.rollNo === rollNo);
                     return (
@@ -275,7 +279,7 @@ export default function TeamSelection() {
                   )}
                 </CyberCardTitle>
               </CyberCardHeader>
-              <div className="grid gap-3">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {selectableStudents.map((student) => {
                   const isSelected = selectedRolls.includes(student.rollNo);
                   const isDisabled = profile?.editAttemptsLeft === 0 || 
@@ -303,7 +307,7 @@ export default function TeamSelection() {
               <CyberCardHeader className="pb-0">
                 <CyberCardTitle className="text-muted-foreground">Already in Teams</CyberCardTitle>
               </CyberCardHeader>
-              <div className="grid gap-3 opacity-50">
+              <div className="grid gap-3 opacity-50 sm:grid-cols-2 lg:grid-cols-3">
                 {unavailableStudents.map((student) => (
                   <StudentCard
                     key={student.rollNo}
@@ -318,12 +322,13 @@ export default function TeamSelection() {
               </div>
             </div>
           )}
+          </div>
         </main>
         <Footer />
 
         {/* Fixed Submit Button at Bottom */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur border-t border-border">
-          <div className="container">
+          <div className="container max-w-5xl">
             <CyberButton
               className="w-full"
               size="xl"
