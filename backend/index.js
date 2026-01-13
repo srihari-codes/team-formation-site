@@ -7,10 +7,10 @@ const jwt = require('jsonwebtoken');
 
 const XLSX = require('xlsx');
 
+
 const { Student, Preference, Team, Settings } = require('./models');
 const { getStudentsByBatch, savePreference, getTeamStatus, finalizeTeams, closeSelection, openSelection, isSelectionOpen, getExportData, getAdminDashboardData, manualCreateTeam, dissolveTeam } = require('./teamLogic');
 
-// Import security middleware
 const {
   globalLimiter,
   authLimiter,
@@ -40,40 +40,17 @@ const {
 
 const app = express();
 
-// ==================== SECURITY MIDDLEWARE (ORDER MATTERS!) ====================
-
-// 1. Trust proxy (if behind nginx/cloudflare)
 app.set('trust proxy', 1);
-
-// 2. Security headers
 app.use(helmetConfig);
-
-// 3. CORS
 app.use(corsConfig);
-
-// 4. Security logging
 app.use(securityLogger);
-
-// 5. Global rate limiting
 app.use(globalLimiter);
-
-// 6. Speed limiter
 app.use(speedLimiter);
-
-// 7. Body parser with size limit
-app.use(express.json({ limit: '10kb' })); // Limit payload size to 10KB
+app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-
-// 8. HTTP Parameter Pollution protection
 app.use(hpp());
-
-// 9. NoSQL injection protection
 app.use(sanitizeInput);
-
-// 10. Deep sanitization
 app.use(deepSanitizeMiddleware);
-
-// ==================== CONFIGURATION ====================
 
 const port = process.env.PORT || 3000;
 
@@ -153,8 +130,6 @@ function verifyAccessToken(token) {
   } catch { return null; }
 }
 
-// ==================== MIDDLEWARE ====================
-
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
@@ -202,8 +177,6 @@ function adminMiddleware(req, res, next) {
   next();
 }
 
-// ==================== HEALTH CHECK ====================
-
 app.get('/', (req, res) => {
   res.status(200).json({ 
     status: 'ok', 
@@ -219,8 +192,6 @@ app.get('/health', (req, res) => {
     memoryUsage: process.memoryUsage().heapUsed / 1024 / 1024
   });
 });
-
-// ==================== AUTH ROUTES ====================
 
 app.get('/get-session', authLimiter, bruteForceProtection, async (req, res) => {
   const result = await erpRequest({
@@ -491,8 +462,6 @@ app.post('/forgot-password', authLimiter, bruteForceProtection, async (req, res)
   }
 });
 
-// ==================== TEAM ROUTES (PROTECTED) ====================
-
 app.get('/me', authMiddleware, async (req, res) => {
   const student = await Student.findOne({ rollNo: req.user.username });
   if (!student) return res.status(404).json({ error: 'Student not found' });
@@ -547,8 +516,6 @@ app.get('/team/status', authMiddleware, async (req, res) => {
     res.status(err.code || 500).json({ error: err.message || 'Internal error' });
   }
 });
-
-// ==================== ADMIN ROUTES ====================
 
 app.post('/admin/finalize', adminMiddleware, adminLimiter, async (req, res) => {
   const { batch } = req.body;
@@ -681,15 +648,10 @@ app.delete('/admin/team/:teamId', adminMiddleware, adminLimiter, async (req, res
   }
 });
 
-// ==================== ERROR HANDLING ====================
-
-// 404 handler
 app.use(notFoundHandler);
 
 // Global error handler
 app.use(errorHandler);
-
-// ==================== GRACEFUL SHUTDOWN ====================
 
 let server;
 
@@ -733,8 +695,6 @@ process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
   gracefulShutdown('uncaughtException');
 });
-
-// ==================== STARTUP ====================
 
 mongoose.connect(MONGO_URI, {
   maxPoolSize: 10,

@@ -11,7 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import TeamSelection from "./pages/TeamSelection";
 import TeamStatus from "./pages/TeamStatus";
 import LockedState from "./pages/LockedState";
-import AdminLogin from "./pages/AdminExport";
+import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -34,7 +34,6 @@ const App = () => (
             <Route path="/locked" element={<LockedState />} />
             <Route path="/banana" element={<AdminLogin />} />
             <Route path="/banana-dash" element={<AdminDashboard />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

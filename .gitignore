@@ -1,0 +1,50 @@
+# Root .gitignore for team-formation-site
+
+# Common/Global
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.bak
+*.tmp
+*.swp
+*.swo
+*~
+
+# Backend
+backend/node_modules/
+backend/.env
+backend/.env.local
+backend/.env.*.local
+backend/logs/
+backend/*.log
+backend/npm-debug.log*
+backend/pids/
+backend/*.pid
+backend/*.seed
+backend/*.pid.lock
+backend/coverage/
+backend/.nyc_output/
+backend/dist/
+backend/build/
+backend/scripts/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/logs/
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+frontend/*.suo
+frontend/*.ntvs*
+frontend/*.njsproj
+frontend/*.sln
+frontend/*.sw?

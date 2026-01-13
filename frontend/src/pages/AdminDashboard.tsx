@@ -42,7 +42,6 @@ export default function AdminDashboard() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [statuses, setStatuses] = useState<Record<string, BatchStatus>>({});
   
-  // Modals/Actions state
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showManualCreate, setShowManualCreate] = useState(false);
   const [manualMembers, setManualMembers] = useState<string[]>([]);
@@ -272,7 +271,6 @@ export default function AdminDashboard() {
       </header>
 
       <main className="flex-1 container max-w-7xl py-8 space-y-8 relative z-10">
-        {/* Phase Control Row */}
         <div className="grid gap-6 md:grid-cols-3">
           <CyberCard variant="glow" className="md:col-span-2">
             <CyberCardHeader className="flex flex-row items-center justify-between pb-2">
@@ -362,7 +360,6 @@ export default function AdminDashboard() {
           </CyberCard>
         </div>
 
-        {/* Search & Actions */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="relative w-full md:max-w-md group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -380,9 +377,7 @@ export default function AdminDashboard() {
           </CyberButton>
         </div>
 
-        {/* Dashboard Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Students List */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <User className="w-4 h-4 text-primary" />
@@ -458,7 +453,6 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          {/* Teams List */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Users className="w-4 h-4 text-primary" />
@@ -508,7 +502,6 @@ export default function AdminDashboard() {
         </div>
       </main>
 
-      {/* Manual Create Modal */}
       {showManualCreate && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
           <CyberCard variant="glow" className="max-w-2xl w-full">

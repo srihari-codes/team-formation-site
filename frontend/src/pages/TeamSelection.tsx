@@ -161,13 +161,11 @@ export default function TeamSelection() {
         
         <main className="flex-1">
           <div className="container max-w-5xl py-6 space-y-6 pb-24">
-          {/* Back Button */}
           <CyberButton variant="ghost" onClick={() => navigate("/me")}>
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </CyberButton>
 
-          {/* Instructions Box */}
           <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 cyber-glow-sm relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
             <div className="flex gap-3">
@@ -192,7 +190,6 @@ export default function TeamSelection() {
             </div>
           </div>
 
-          {/* Selected Teammates Section */}
           <CyberCard variant={selectedRolls.length === 2 ? "glow" : "default"}>
             <CyberCardHeader className="pb-2">
               <CyberCardTitle className="flex items-center gap-2">
@@ -249,7 +246,6 @@ export default function TeamSelection() {
             </CyberCardContent>
           </CyberCard>
 
-          {/* Warning for last attempt */}
           {profile && profile.editAttemptsLeft === 1 && (
             <div className="p-3 rounded-md bg-warning/10 border border-warning/30 flex items-start gap-3">
               <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0 mt-0.5" />
@@ -259,14 +255,12 @@ export default function TeamSelection() {
             </div>
           )}
 
-          {/* Error Message */}
           {error && (
             <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30">
               <p className="text-xs font-mono text-destructive">{error}</p>
             </div>
           )}
 
-          {/* Available Students */}
           {selectableStudents.length > 0 && (
             <div className="space-y-3">
               <CyberCardHeader className="pb-0">
@@ -301,7 +295,6 @@ export default function TeamSelection() {
             </div>
           )}
 
-          {/* Unavailable Students */}
           {unavailableStudents.length > 0 && (
             <div className="space-y-3">
               <CyberCardHeader className="pb-0">
@@ -326,7 +319,6 @@ export default function TeamSelection() {
         </main>
         <Footer />
 
-        {/* Fixed Submit Button at Bottom */}
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur border-t border-border">
           <div className="container max-w-5xl">
             <CyberButton
@@ -357,7 +349,6 @@ export default function TeamSelection() {
           </div>
         </div>
 
-        {/* Confirmation Modal */}
         {showConfirmation && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
             <CyberCard variant="glow" className="max-w-md w-full">

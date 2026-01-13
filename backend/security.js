@@ -1,8 +1,3 @@
-/**
- * Security Middleware & Utilities
- * Comprehensive security hardening for production deployment
- */
-
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const helmet = require('helmet');
@@ -10,24 +5,6 @@ const cors = require('cors');
 const hpp = require('hpp');
 const mongoSanitize = require('mongo-sanitize');
 
-// ==================== RATE LIMITING ====================
-
-/**
- * Rate Limit Configuration
- * 
- * RATE_LIMIT_LEVEL controls all rate limits across the server:
- * - Level 1: Most restrictive (base limits)
- * - Level 5: Moderate (5x base limits) - recommended for development
- * - Level 10: Most lenient (10x base limits)
- * 
- * Base limits (at level 1):
- * - Global: 10 requests per 15 min
- * - Auth: 2 requests per 15 min
- * - Captcha: 5 requests per 15 min
- * - Admin: 5 requests per 15 min
- * - Selection: 2 requests per hour
- * - Speed delay after: 5 requests
- */
 const RATE_LIMIT_LEVEL = Math.min(10, Math.max(1, parseInt(process.env.RATE_LIMIT_LEVEL, 10) || 5));
 
 // Base rate limits (multiplied by RATE_LIMIT_LEVEL)
@@ -123,9 +100,6 @@ const selectionLimiter = rateLimit({
   keyGenerator: ipKeyGenerator
 });
 
-/**
- * Speed limiter - gradually slow down responses for repeat offenders
- */
 const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000,
   delayAfter: LIMITS.speedDelay,
@@ -134,11 +108,6 @@ const speedLimiter = slowDown({
   keyGenerator: ipKeyGenerator
 });
 
-// ==================== INPUT SANITIZATION ====================
-
-/**
- * Sanitize request body, query, and params to prevent NoSQL injection
- */
 function sanitizeInput(req, res, next) {
   if (req.body) req.body = mongoSanitize(req.body);
   if (req.query) req.query = mongoSanitize(req.query);
@@ -182,8 +151,6 @@ function deepSanitizeMiddleware(req, res, next) {
   next();
 }
 
-// ==================== SECURITY HEADERS (HELMET) ====================
-
 const helmetConfig = helmet({
   // Disable CSP for pure API servers (no HTML served)
   contentSecurityPolicy: false,
@@ -207,8 +174,6 @@ const helmetConfig = helmet({
   xssFilter: true
 });
 
-// ==================== CORS CONFIGURATION ====================
-
 const corsConfig = cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, curl, etc.) in dev
@@ -227,8 +192,6 @@ const corsConfig = cors({
   credentials: true,
   maxAge: 86400 // 24 hours
 });
-
-// ==================== BRUTE FORCE PROTECTION ====================
 
 const failedAttempts = new Map();
 const BLOCK_DURATION = 30 * 60 * 1000; // 30 minutes block
@@ -288,57 +251,36 @@ function bruteForceProtection(req, res, next) {
 
 // ==================== REQUEST VALIDATION ====================
 
-/**
- * Validate roll number format (alphanumeric, max 20 chars)
- */
 function isValidRollNo(rollNo) {
   if (typeof rollNo !== 'string') return false;
   return /^[A-Za-z0-9]{5,20}$/.test(rollNo);
 }
 
-/**
- * Validate batch (A or B only)
- */
 function isValidBatch(batch) {
   return batch === 'A' || batch === 'B';
 }
 
-/**
- * Validate session ID format
- */
 function isValidSessionId(sessionId) {
   if (typeof sessionId !== 'string') return false;
   return /^[A-Za-z0-9._-]{16,128}$/.test(sessionId);
 }
 
-/**
- * Validate OTP (numeric, 4-8 digits)
- */
 function isValidOTP(otp) {
   if (typeof otp !== 'string') return false;
   return /^\d{4,8}$/.test(otp);
 }
 
-/**
- * Validate captcha (alphanumeric, 4-10 chars)
- */
 function isValidCaptcha(captcha) {
   if (typeof captcha !== 'string') return false;
   return /^[A-Za-z0-9]{4,10}$/.test(captcha);
 }
 
-/**
- * Validate JWT token format
- */
 function isValidJWT(token) {
   if (typeof token !== 'string') return false;
   const parts = token.split('.');
   return parts.length === 3 && parts.every(part => /^[A-Za-z0-9_-]+$/.test(part));
 }
 
-/**
- * Validate choices array (for team selection)
- */
 function isValidChoices(choices) {
   if (!Array.isArray(choices)) return false;
   if (choices.length !== 2) return false;
@@ -347,9 +289,6 @@ function isValidChoices(choices) {
 
 // ==================== ERROR HANDLING ====================
 
-/**
- * Global error handler - hide stack traces in production
- */
 function errorHandler(err, req, res, next) {
   // Log error for debugging
   console.error(`[ERROR] ${new Date().toISOString()} - ${req.method} ${req.path}:`, err.message);
@@ -373,14 +312,9 @@ function errorHandler(err, req, res, next) {
   res.status(statusCode).json({ error: message });
 }
 
-/**
- * 404 Not Found handler
- */
 function notFoundHandler(req, res) {
   res.status(404).json({ error: 'Endpoint not found' });
 }
-
-// ==================== SECURITY LOGGING ====================
 
 function securityLogger(req, res, next) {
   const start = Date.now();
@@ -406,8 +340,6 @@ function securityLogger(req, res, next) {
   
   next();
 }
-
-// ==================== EXPORTS ====================
 
 module.exports = {
   // Rate limiters

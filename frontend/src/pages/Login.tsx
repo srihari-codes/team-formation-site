@@ -177,7 +177,6 @@ export default function Login() {
         setError(msg);
         toast.error(msg);
       } else if (data.access_token) {
-        // Name is not returned by login, will be fetched in dashboard
         login(data.access_token, data.username, data.batch, "");
         toast.success("Authentication successful. Welcome back.");
         navigate("/me");
@@ -201,7 +200,6 @@ export default function Login() {
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-sm space-y-6">
-          {/* Logo */}
           <div className="text-center space-y-2">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-lg bg-primary/10 border border-primary/30 cyber-glow">
               <img src={GROUPIFY_LOGO} alt="Groupify Logo" className="w-12 h-12 object-contain" />

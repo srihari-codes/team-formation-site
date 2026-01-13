@@ -1,18 +1,11 @@
 const { Student, Preference, Team, Settings } = require('./models');
 
-/**
- * Check if selection is open for a batch
- */
 async function isSelectionOpen(batch) {
   const settings = await Settings.findOne({ batch });
   if (!settings) return true; // Default open if no settings exist
   return settings.selectionOpen;
 }
 
-/**
- * Auto-match logic: Check if 3 students mutually selected each other
- * Triggered after every valid preference save
- */
 async function tryFormTeam(rollNo) {
   const student = await Student.findOne({ rollNo });
   if (!student || student.teamId) return null;
@@ -55,7 +48,6 @@ async function tryFormTeam(rollNo) {
       { $set: { teamId: team._id } }
     );
 
-    // CLEANUP: Delete preferences for formed team (no dirty data)
     await Preference.deleteMany({ rollNo: { $in: members } });
 
     return team;
@@ -64,9 +56,6 @@ async function tryFormTeam(rollNo) {
   return null;
 }
 
-/**
- * Get all students in a batch with selectability status
- */
 async function getStudentsByBatch(batch) {
   const students = await Student.find({ batch }).select('rollNo name teamId -_id');
   return students.map(s => ({
@@ -76,9 +65,6 @@ async function getStudentsByBatch(batch) {
   }));
 }
 
-/**
- * Validate and save preference
- */
 async function savePreference(rollNo, choices) {
   const student = await Student.findOne({ rollNo });
   if (!student) throw { code: 404, message: 'Student not found' };
@@ -122,9 +108,6 @@ async function savePreference(rollNo, choices) {
   };
 }
 
-/**
- * Get team status for a student
- */
 async function getTeamStatus(rollNo) {
   const student = await Student.findOne({ rollNo });
   if (!student) throw { code: 404, message: 'Student not found' };
@@ -144,9 +127,6 @@ async function getTeamStatus(rollNo) {
   };
 }
 
-/**
- * Admin: Close selection for a batch
- */
 async function closeSelection(batch) {
   await Settings.findOneAndUpdate(
     { batch },
@@ -156,9 +136,6 @@ async function closeSelection(batch) {
   return { batch, selectionOpen: false };
 }
 
-/**
- * Admin: Open selection for a batch
- */
 async function openSelection(batch) {
   await Settings.findOneAndUpdate(
     { batch },
@@ -168,9 +145,6 @@ async function openSelection(batch) {
   return { batch, selectionOpen: true };
 }
 
-/**
- * Admin: Finalize unassigned students into teams
- */
 async function finalizeTeams(batch) {
   // Auto-close selection when finalizing
   await closeSelection(batch);
@@ -207,9 +181,6 @@ async function finalizeTeams(batch) {
   return { finalized: true, teamsCreated };
 }
 
-/**
- * Admin: Get formatted data for Excel export
- */
 async function getExportData(batch) {
   const teams = await Team.find({ batch }).sort({ createdAt: 1 });
   const students = await Student.find({ batch }).select('rollNo name');
@@ -235,9 +206,6 @@ async function getExportData(batch) {
   return data;
 }
 
-/**
- * Admin: Get dashboard data (Students with prefs + current teams)
- */
 async function getAdminDashboardData(batch) {
   const [students, preferences, teams] = await Promise.all([
     Student.find({ batch }).select('rollNo name teamId editAttemptsLeft'),
@@ -264,9 +232,6 @@ async function getAdminDashboardData(batch) {
   };
 }
 
-/**
- * Admin: Manually create a team (Bypass mutual consent)
- */
 async function manualCreateTeam(batch, members) {
   if (!Array.isArray(members) || members.length < 1 || members.length > 3) {
     throw { code: 400, message: 'Team must have 1-3 members' };
@@ -295,9 +260,6 @@ async function manualCreateTeam(batch, members) {
   return team;
 }
 
-/**
- * Admin: Dissolve a team
- */
 async function dissolveTeam(teamId) {
   const team = await Team.findById(teamId);
   if (!team) throw { code: 404, message: 'Team not found' };
