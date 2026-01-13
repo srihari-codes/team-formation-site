@@ -84,8 +84,7 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen bg-background grid-pattern relative">
       <SplineBackground
-        sceneUrl="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode"
-        className="opacity-20"
+        className="opacity-80"
       />
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">

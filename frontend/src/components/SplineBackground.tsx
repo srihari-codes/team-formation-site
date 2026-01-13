@@ -1,14 +1,16 @@
 import { lazy, Suspense, useState } from "react";
 import { useIsDesktop } from "@/hooks/useMediaQuery";
 
+import { SPLINE_SCENE_URL } from "@/config/assets";
+
 const Spline = lazy(() => import("@splinetool/react-spline"));
 
 interface SplineBackgroundProps {
-  sceneUrl: string;
+  sceneUrl?: string;
   className?: string;
 }
 
-export function SplineBackground({ sceneUrl, className = "" }: SplineBackgroundProps) {
+export function SplineBackground({ sceneUrl = SPLINE_SCENE_URL, className = "" }: SplineBackgroundProps) {
   const isDesktop = useIsDesktop();
   const [loaded, setLoaded] = useState(false);
 
@@ -21,7 +23,7 @@ export function SplineBackground({ sceneUrl, className = "" }: SplineBackgroundP
     <div className={`absolute inset-0 pointer-events-none overflow-hidden ${className}`}>
       <Suspense fallback={null}>
         <div 
-          className={`w-full h-full transition-opacity duration-1000 ${loaded ? 'opacity-30' : 'opacity-0'}`}
+          className={`w-full h-full transition-opacity duration-1000 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         >
           <Spline 
             scene={sceneUrl} 

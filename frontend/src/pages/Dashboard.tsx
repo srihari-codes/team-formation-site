@@ -96,8 +96,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background relative">
       <SplineBackground 
-        sceneUrl="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode"
-        className="opacity-10"
+        className="opacity-60"
       />
       
       <div className="relative z-10">

@@ -15,14 +15,14 @@ import {
   Lock,
   ArrowRight,
   Clock,
+  MessageSquare,
 } from "lucide-react";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-background text-foreground grid-pattern relative overflow-hidden">
       <SplineBackground 
-        sceneUrl="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" 
-        className="opacity-20 pointer-events-none"
+        className="opacity-80 pointer-events-none"
       />
 
       {/* TOP HEADER - IMMEDIATE ACCESS */}
@@ -47,11 +47,8 @@ const Home = () => {
           {/* HERO SECTION - LOGIN IS NOW TOP VISIBLE */}
           <section className="text-center space-y-8 pt-6 md:pt-12">
             <div className="space-y-4">
-              <div className="inline-block px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-[10px] md:text-xs font-mono mb-4 backdrop-blur-sm animate-pulse">
-                SYSTEM STATUS: ACTIVE // BATCH ISOLATION ENABLED
-              </div>
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground cyber-text-glow leading-tight font-mono">
-                Groupify<br/><span className="text-primary/90">Protocol V2.0</span>
+                Groupify<br/>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto backdrop-blur-sm p-2 rounded-lg leading-relaxed">
                 A secure system where teams form only through <span className="text-foreground font-semibold">mutual consensus</span>. 
@@ -68,7 +65,46 @@ const Home = () => {
               </Link>
             </div>
           </section>
+{/* COORDINATION ADVICE */}
+          <section className="space-y-8 pt-12 pb-20">
+            <div className="flex items-center gap-4 mb-2">
+              <div className="h-px bg-primary/20 flex-1" />
+              <h2 className="text-lg font-mono font-bold text-primary/80 uppercase tracking-widest whitespace-nowrap">
+                Offline Coordination
+              </h2>
+              <div className="h-px bg-primary/20 flex-1" />
+            </div>
 
+            <CyberCard className="bg-primary/5 border-primary/20 backdrop-blur-md">
+              <CyberCardContent className="p-8 text-center space-y-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 border border-primary/20 mb-2">
+                  <MessageSquare className="w-8 h-8 text-primary" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold font-mono text-foreground uppercase tracking-tight">
+                    Talk First, Select Later
+                  </h3>
+                  <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed text-lg">
+                    Team selection is <span className="text-foreground font-semibold">not a random process</span>. 
+                    Reach a definite conclusion with your potential teammates <span className="text-primary/90 font-medium italic">offline</span> before entering any data.
+                  </p>
+                </div>
+                <div className="p-4 bg-background/50 rounded-lg border border-white/5 max-w-xl mx-auto">
+                  <p className="text-sm text-muted-foreground font-mono">
+                    "Coordinate with your sequence colleagues, verify their willingness, and only then proceed to formalize the choice."
+                  </p>
+                </div>
+                <div className="pt-4">
+                  <Link to="/login">
+                    <CyberButton size="xl" className="px-16 shadow-[0_0_20px_rgba(var(--primary),0.15)]">
+                      Proceed to Identity Verification
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </CyberButton>
+                  </Link>
+                </div>
+              </CyberCardContent>
+            </CyberCard>
+          </section>
           {/* HOW IT WORKS */}
           <section className="space-y-8 pt-12">
             <div className="flex items-center gap-4 mb-2">
@@ -111,8 +147,27 @@ const Home = () => {
                     3. Mutual Consensus
                   </CyberCardTitle>
                 </CyberCardHeader>
-                <CyberCardContent className="text-sm text-muted-foreground leading-relaxed">
-                  A team forms ONLY if Student A selects B & C, Student B selects A & C, and Student C selects A & B perfectly.
+                <CyberCardContent className="text-sm text-muted-foreground space-y-3">
+                  <p>A team forms ONLY when three students reach a <span className="text-primary/90 font-bold underline decoration-primary/30 underline-offset-4">perfect match</span>:</p>
+                  <ul className="space-y-2 ml-1 font-mono text-[13px]">
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span>Student A selects <b className="text-foreground">B & C</b></span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span>Student B selects <b className="text-foreground">A & C</b></span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span>Student C selects <b className="text-foreground">A & B</b></span>
+                    </li>
+                  </ul>
+                  <div className="pt-2 border-t border-white/5">
+                    <p className="text-[11px] leading-tight text-primary/60">
+                      If even one selection is missing or different, the team will not form.
+                    </p>
+                  </div>
                 </CyberCardContent>
               </CyberCard>
 
@@ -161,31 +216,6 @@ const Home = () => {
                 </ul>
               </CyberCardContent>
             </CyberCard>
-          </section>
-
-          {/* USER ACKNOWLEDGEMENT & FINAL CTA */}
-          <section className="space-y-12 pt-12 pb-20">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground backdrop-blur-sm p-4 rounded-xl bg-white/5 border border-white/5">
-                <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
-                <span>I understand teams form only by mutual selection.</span>
-              </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground backdrop-blur-sm p-4 rounded-xl bg-white/5 border border-white/5">
-                <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
-                <span>I understand my edits are limited.</span>
-              </div>
-            </div>
-
-            <div className="text-center pt-4">
-              <p className="text-xs font-mono text-muted-foreground mb-6 uppercase tracking-widest">
-                Ready to Proceed?
-              </p>
-              <Link to="/login">
-                <CyberButton size="lg" variant="default" className="px-16">
-                  LOGIN TO ACCESS
-                </CyberButton>
-              </Link>
-            </div>
           </section>
         </div>
       </div>
