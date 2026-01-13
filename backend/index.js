@@ -322,19 +322,30 @@ app.get('/get-otp', authLimiter, bruteForceProtection, async (req, res) => {
     })
   });
 
-  const is200 = result.success && result.response.status === 200;
-  const isHuman = is200 && !result.response.data.toString().includes('Invalid Captcha');
+  const responseData = result.response.data.toString();
+  
+  const isHuman = !/invalid captcha/i.test(responseData);
+  const isCredential = !responseData.includes('Invalid User ID or Password');
+  const isSuccess = responseData.includes('funAttPageController()');
 
-  if (!isHuman) {
+  const responsePayload = {
+    human: isHuman,
+    credential: isCredential,
+    success: isSuccess
+  };
+
+  if (!isHuman || !isCredential || !isSuccess) {
     trackFailedAttempt(ip);
-    return res.status(401).json({ human: false });
+    // If it's a known failure (captcha or creds), return the flags.
+    // We return 200 OK so the client can parse the flags specifically.
+    return res.json(responsePayload);
   }
 
   // Clear failed attempts on success
   clearFailedAttempts(ip);
   
   const tempToken = generateTempToken(username, session_id);
-  res.json({ human: true, temp_token: tempToken });
+  res.json({ ...responsePayload, temp_token: tempToken });
 });
 
 app.get('/login', authLimiter, bruteForceProtection, async (req, res) => {

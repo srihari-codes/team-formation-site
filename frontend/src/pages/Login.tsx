@@ -1,6 +1,7 @@
+import { toast } from "sonner";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Shield, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { Shield, Eye, EyeOff, RefreshCw, AlertCircle, AlertTriangle } from "lucide-react";
 import { CyberButton } from "@/components/ui/cyber-button";
 import { CyberInput } from "@/components/ui/cyber-input";
 import { CyberCard, CyberCardContent, CyberCardHeader, CyberCardTitle } from "@/components/ui/cyber-card";
@@ -82,14 +83,35 @@ export default function Login() {
 
       if (data.error) {
         setError(data.error);
+        toast.error(data.error);
         await fetchSession();
       } else if (!data.human) {
-        setError("Incorrect captcha. Try again.");
+        const msg = "CAPTCHA ERROR: Verification failed. Please enter the correct characters from the image.";
+        setError(msg);
+        toast.error(msg);
         setCaptcha("");
         await fetchSession();
-      } else if (data.temp_token) {
+      } else if (!data.credential) {
+        const msg = "CREDENTIAL ERROR: Unauthorized access. The Roll Number or Password provided is incorrect.";
+        setError(msg);
+        toast.error(msg, {
+          duration: 5000,
+        });
+        await fetchSession();
+      } else if (data.success === false) {
+        const msg = "UNEXPECTED ERROR: The server encountered an issue while processing your request.";
+        setError(msg);
+        toast.error(msg);
+        await fetchSession();
+      } else if (data.success && data.temp_token) {
         setTempToken(data.temp_token);
         setStep("otp");
+        toast.success("Identity verified. Please enter the OTP sent to your device.");
+      } else {
+        const msg = "UNEXPECTED ERROR: Failed to proceed to the next step.";
+        setError(msg);
+        toast.error(msg);
+        await fetchSession();
       }
     } catch {
       setError("Connection failed. Try again.");
@@ -120,12 +142,24 @@ export default function Login() {
 
       if (data.error) {
         setError(data.error);
-      } else if (!data.verified) {
-        setError("Incorrect OTP. Try again.");
+        toast.error(data.error);
+      } else if (data.verified === false) {
+        const msg = "OTP ERROR: The verification code entered is incorrect. Please try again.";
+        setError(msg);
+        toast.error(msg);
         setOtp("");
+      } else if (data.success === false) {
+        const msg = "UNEXPECTED ERROR: Verification processing failed on the server.";
+        setError(msg);
+        toast.error(msg);
       } else if (data.access_token) {
         login(data.access_token, data.username, data.batch);
+        toast.success("Authentication successful. Welcome back.");
         navigate("/me");
+      } else {
+        const msg = "UNEXPECTED ERROR: Unable to complete authentication.";
+        setError(msg);
+        toast.error(msg);
       }
     } catch {
       setError("Connection failed. Try again.");
@@ -231,12 +265,6 @@ export default function Login() {
                     />
                   </div>
 
-                  {error && (
-                    <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30">
-                      <p className="text-xs font-mono text-destructive">{error}</p>
-                    </div>
-                  )}
-
                   <CyberButton
                     type="submit"
                     className="w-full"
@@ -249,6 +277,20 @@ export default function Login() {
                       "Request OTP"
                     )}
                   </CyberButton>
+
+                  {error && (
+                    <div className="mt-4 p-4 rounded-lg bg-destructive/15 border border-destructive/40 flex gap-3 items-start animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                      <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <p className="text-[11px] font-mono font-bold text-destructive uppercase tracking-widest leading-none">
+                          System Execution Error
+                        </p>
+                        <p className="text-xs font-mono text-destructive leading-normal font-semibold">
+                          {error}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </form>
               ) : (
                 <form onSubmit={handleSubmitOtp} className="space-y-4">
@@ -266,12 +308,6 @@ export default function Login() {
                     maxLength={7}
                   />
 
-                  {error && (
-                    <div className="p-3 rounded-md bg-destructive/10 border border-destructive/30">
-                      <p className="text-xs font-mono text-destructive">{error}</p>
-                    </div>
-                  )}
-
                   <CyberButton
                     type="submit"
                     className="w-full"
@@ -284,6 +320,20 @@ export default function Login() {
                       "Verify & Login"
                     )}
                   </CyberButton>
+
+                  {error && (
+                    <div className="mt-4 p-4 rounded-lg bg-destructive/15 border border-destructive/40 flex gap-3 items-start animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                      <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <p className="text-[11px] font-mono font-bold text-destructive uppercase tracking-widest leading-none">
+                          Validation Failure
+                        </p>
+                        <p className="text-xs font-mono text-destructive leading-normal font-semibold">
+                          {error}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   <CyberButton
                     type="button"

@@ -6,11 +6,15 @@ export interface SessionResponse {
 
 export interface OtpResponse {
   human: boolean;
+  credential: boolean;
+  success: boolean;
   temp_token?: string;
+  error?: string;
 }
 
 export interface LoginResponse {
   verified: boolean;
+  success: boolean;
   access_token?: string;
   username?: string;
   batch?: "A" | "B";
