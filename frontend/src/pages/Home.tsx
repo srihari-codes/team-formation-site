@@ -99,7 +99,7 @@ const Home = () => {
                 <div className="pt-4">
                   <Link to="/login">
                     <CyberButton size="xl" className="px-16 shadow-[0_0_20px_rgba(var(--primary),0.15)]">
-                      Proceed to Identity Verification
+                      Proceed
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </CyberButton>
                   </Link>

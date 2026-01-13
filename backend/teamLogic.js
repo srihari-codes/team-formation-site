@@ -207,6 +207,34 @@ async function finalizeTeams(batch) {
   return { finalized: true, teamsCreated };
 }
 
+/**
+ * Admin: Get formatted data for Excel export
+ */
+async function getExportData(batch) {
+  const teams = await Team.find({ batch }).sort({ createdAt: 1 });
+  const students = await Student.find({ batch }).select('rollNo name');
+  const studentMap = students.reduce((acc, s) => {
+    acc[s.rollNo] = s.name;
+    return acc;
+  }, {});
+
+  const data = teams.map((t, index) => {
+    const row = {
+      'Team No': index + 1,
+      'Batch': t.batch,
+      'Member 1 Roll': t.members[0] || '',
+      'Member 1 Name': studentMap[t.members[0]] || '',
+      'Member 2 Roll': t.members[1] || '',
+      'Member 2 Name': studentMap[t.members[1]] || '',
+      'Member 3 Roll': t.members[2] || '',
+      'Member 3 Name': studentMap[t.members[2]] || ''
+    };
+    return row;
+  });
+
+  return data;
+}
+
 module.exports = {
   isSelectionOpen,
   tryFormTeam,
@@ -215,5 +243,6 @@ module.exports = {
   getTeamStatus,
   closeSelection,
   openSelection,
-  finalizeTeams
+  finalizeTeams,
+  getExportData
 };

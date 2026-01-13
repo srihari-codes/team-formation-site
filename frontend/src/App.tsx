@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import TeamSelection from "./pages/TeamSelection";
 import TeamStatus from "./pages/TeamStatus";
 import LockedState from "./pages/LockedState";
+import AdminExport from "./pages/AdminExport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/team/select" element={<TeamSelection />} />
             <Route path="/team/status" element={<TeamStatus />} />
             <Route path="/locked" element={<LockedState />} />
+            <Route path="/banana" element={<AdminExport />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

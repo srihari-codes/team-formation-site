@@ -5,8 +5,10 @@ const axios = require('axios');
 const qs = require('qs');
 const jwt = require('jsonwebtoken');
 
+const XLSX = require('xlsx');
+
 const { Student, Preference, Team, Settings } = require('./models');
-const { getStudentsByBatch, savePreference, getTeamStatus, finalizeTeams, closeSelection, openSelection, isSelectionOpen } = require('./teamLogic');
+const { getStudentsByBatch, savePreference, getTeamStatus, finalizeTeams, closeSelection, openSelection, isSelectionOpen, getExportData } = require('./teamLogic');
 
 // Import security middleware
 const {
@@ -583,6 +585,56 @@ app.post('/admin/selection/open', adminMiddleware, adminLimiter, async (req, res
 
   const result = await openSelection(batch);
   res.json(result);
+});
+
+app.get('/admin/export/teams', adminMiddleware, adminLimiter, async (req, res) => {
+  const { batch } = req.query;
+  
+  if (!batch || !isValidBatch(batch)) {
+    return res.status(400).json({ error: 'Valid batch (A or B) required' });
+  }
+
+  try {
+    const data = await getExportData(batch);
+    
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(data);
+    
+    // Auto-size columns (rough approximation)
+    const colWidths = [
+      { wch: 10 }, // Team No
+      { wch: 8 },  // Batch
+      { wch: 15 }, // Member 1 Roll
+      { wch: 25 }, // Member 1 Name
+      { wch: 15 }, // Member 2 Roll
+      { wch: 25 }, // Member 2 Name
+      { wch: 15 }, // Member 3 Roll
+      { wch: 25 }  // Member 3 Name
+    ];
+    ws['!cols'] = colWidths;
+
+    XLSX.utils.book_append_sheet(wb, ws, `Teams_Batch_${batch}`);
+    
+    // Generate buffer
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    
+    // Set headers for download
+    const filename = `Teams_Batch_${batch}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    
+    // Disable caching for this endpoint to ensure fresh data
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    
+    res.send(buf);
+  } catch (err) {
+    console.error('Export error:', err);
+    res.status(500).json({ error: 'Failed to generate Excel file' });
+  }
 });
 
 app.get('/admin/selection/status', adminMiddleware, adminLimiter, async (req, res) => {
