@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Shield,
   Eye,
@@ -252,6 +252,15 @@ export default function Login() {
                         <Eye className="w-4 h-4" />
                       )}
                     </button>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Link 
+                      to="/forgot-password" 
+                      className="text-xs text-primary hover:text-primary/80 transition-colors font-mono"
+                    >
+                      Forgot Password?
+                    </Link>
                   </div>
 
                   <div className="space-y-2">

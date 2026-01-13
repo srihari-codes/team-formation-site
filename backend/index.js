@@ -455,6 +455,40 @@ app.get('/login', authLimiter, bruteForceProtection, async (req, res) => {
   res.json({ verified: true, access_token: accessToken, username: rollNo, batch: student.batch });
 });
 
+app.post('/forgot-password', authLimiter, bruteForceProtection, async (req, res) => {
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip;
+  try {
+    const { txt_Email, iden } = req.body;
+    
+    if (!txt_Email || !iden) {
+       return res.status(400).json({ error: 'Email and Identifier required' });
+    }
+
+    const result = await erpRequest({
+      method: 'POST',
+      url: '/studentportal/loginManager/forgotPasswordInner.jsp',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: qs.stringify({ txt_Email, iden })
+    });
+
+    if (!result.success) {
+      throw result.error;
+    }
+    
+    res.json(result.response.data);
+  } catch (error) {
+    trackFailedAttempt(ip);
+    console.error('Proxy Error:', error.message);
+    res.status(500).json({ 
+      result: "Proxy Error", 
+      resultstatus: "0", 
+      resultmsg: "Failed to communicate with external server." 
+    });
+  }
+});
+
 // ==================== TEAM ROUTES (PROTECTED) ====================
 
 app.get('/me', authMiddleware, async (req, res) => {
