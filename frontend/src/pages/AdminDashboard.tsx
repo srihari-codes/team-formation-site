@@ -244,7 +244,7 @@ export default function AdminDashboard() {
             <div className="w-8 h-8 rounded bg-primary/20 border border-primary/30 flex items-center justify-center">
               <ShieldAlert className="w-4 h-4 text-primary" />
             </div>
-            <span className="font-mono text-sm font-bold tracking-tighter">BANANA PROTOCOL <span className="text-primary/50 text-[10px]">v2.1</span></span>
+            <span className="font-mono text-sm font-bold tracking-tighter">BANANA PROTOCOL</span>
           </div>
           
           <div className="flex items-center gap-4">
@@ -332,7 +332,7 @@ export default function AdminDashboard() {
                 );
               })}
               <div className="p-4 rounded-lg bg-background/40 border border-white/5 flex flex-col justify-center gap-3">
-                <span className="text-[10px] font-mono text-muted-foreground uppercase">Global Utility</span>
+                <span className="text-[10px] font-mono text-muted-foreground uppercase">Get Offline Data</span>
                 <CyberButton size="sm" variant="outline" className="w-full" onClick={handleExport} disabled={actionLoading === "export"}>
                   <Download className="w-3 h-3 mr-2" />
                   EXPORT EXCEL
@@ -566,16 +566,6 @@ export default function AdminDashboard() {
           </CyberCard>
         </div>
       )}
-
-      <footer className="w-full py-6 border-t border-white/5 bg-background/80 relative z-20">
-        <div className="container max-w-7xl flex items-center justify-between text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em]">
-          <span>© BANANA_PROTOCOL_UNIT_2026</span>
-          <span className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-            ENCRYPTED_SESSION_STABLE
-          </span>
-        </div>
-      </footer>
     </div>
   );
 }
