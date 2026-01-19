@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { 
   Download, ShieldAlert, Layers, LogOut, Search, 
   User, Users, Unlock, Lock, Zap, Trash2, UserPlus, 
-  X, AlertTriangle, Check
+  X, AlertTriangle, Check, Heart
 } from "lucide-react";
 import { CyberButton } from "@/components/ui/cyber-button";
 import { CyberCard, CyberCardContent, CyberCardHeader, CyberCardTitle } from "@/components/ui/cyber-card";
@@ -45,6 +45,7 @@ export default function AdminDashboard() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showManualCreate, setShowManualCreate] = useState(false);
   const [manualMembers, setManualMembers] = useState<string[]>([]);
+  const [viewingInterests, setViewingInterests] = useState<Student | null>(null);
 
   const fetchStatus = useCallback(async () => {
     if (!adminKey) return;
@@ -429,20 +430,23 @@ export default function AdminDashboard() {
                           </div>
 
                           {!isAssigned && student.choices.length > 0 && (
-                            <div className="flex flex-col items-end gap-1">
-                              <span className="text-[7px] font-mono text-primary/60 uppercase">Interests</span>
+                            <button
+                              onClick={() => setViewingInterests(student)}
+                              className="flex flex-col items-end gap-1 hover:scale-105 transition-transform cursor-pointer group/interests"
+                            >
+                              <span className="text-[7px] font-mono text-primary/60 uppercase group-hover/interests:text-primary transition-colors">Interests</span>
                               <div className="flex -space-x-1.5">
                                 {student.choices.map((c, i) => (
                                   <div 
                                     key={i} 
-                                    className="w-4 h-4 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-[7px] font-mono text-primary group-hover:scale-110 transition-transform shadow-[0_0_10px_rgba(var(--primary),0.2)]" 
+                                    className="w-4 h-4 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-[7px] font-mono text-primary group-hover/interests:scale-110 transition-transform shadow-[0_0_10px_rgba(var(--primary),0.2)]" 
                                     title={`Choice ${i+1}: ${c}`}
                                   >
                                     {i + 1}
                                   </div>
                                 ))}
                               </div>
-                            </div>
+                            </button>
                           )}
                         </CyberCardContent>
                       </CyberCard>
@@ -553,6 +557,73 @@ export default function AdminDashboard() {
                   onClick={handleManualCreate}
                 >
                   {actionLoading === "manual-create" ? "PROCESSING..." : `CREATE TEAM (${manualMembers.length})`}
+                </CyberButton>
+              </div>
+            </CyberCardContent>
+          </CyberCard>
+        </div>
+      )}
+
+      {viewingInterests && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <CyberCard variant="glow" className="max-w-md w-full">
+            <CyberCardHeader className="flex flex-row items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-primary" />
+                <CyberCardTitle>Interested Persons</CyberCardTitle>
+              </div>
+              <button onClick={() => setViewingInterests(null)} className="p-1 hover:bg-white/10 rounded">
+                <X className="w-5 h-5"/>
+              </button>
+            </CyberCardHeader>
+            <CyberCardContent className="space-y-4">
+              <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
+                <p className="text-xs text-muted-foreground font-mono mb-1">Student</p>
+                <p className="font-mono text-sm font-bold uppercase">{viewingInterests.name}</p>
+                <p className="font-mono text-xs text-muted-foreground">{viewingInterests.rollNo}</p>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground font-mono mb-3 uppercase">
+                  {viewingInterests.choices.length} {viewingInterests.choices.length === 1 ? 'Person' : 'People'} Interested
+                </p>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {viewingInterests.choices.map((rollNo, index) => {
+                    const interestedStudent = students.find(s => s.rollNo === rollNo);
+                    return (
+                      <div 
+                        key={rollNo} 
+                        className="flex items-center gap-3 p-3 rounded-lg bg-background/50 border border-white/10 hover:border-primary/30 transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-xs font-mono text-primary shadow-[0_0_15px_rgba(var(--primary),0.2)]">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-mono text-sm font-bold uppercase">
+                            {interestedStudent?.name || rollNo}
+                          </p>
+                          {interestedStudent?.name && (
+                            <p className="font-mono text-xs text-muted-foreground">{rollNo}</p>
+                          )}
+                        </div>
+                        {interestedStudent?.teamId && (
+                          <span className="text-[8px] font-mono px-2 py-1 rounded bg-white/5 border border-white/10 text-muted-foreground uppercase">
+                            Assigned
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-white/10">
+                <CyberButton 
+                  variant="secondary" 
+                  className="w-full"
+                  onClick={() => setViewingInterests(null)}
+                >
+                  Close
                 </CyberButton>
               </div>
             </CyberCardContent>
