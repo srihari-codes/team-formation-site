@@ -153,27 +153,70 @@ function authMiddleware(req, res, next) {
   next();
 }
 
+/**
+ * Admin authentication middleware with two-tier permission system:
+ * - Exact key match (case-sensitive) → full permissions (view + edit)
+ * - Inverted case key match → view-only permissions (no edit)
+ * 
+ * Example: If ADMIN_KEY = "MySecretKey123"
+ *   - "MySecretKey123" → full access
+ *   - "mYsECRETkEY123" → view-only access
+ */
 function adminMiddleware(req, res, next) {
   const adminKey = req.headers['x-admin-key'];
   if (!adminKey || typeof adminKey !== 'string') {
     return res.status(403).json({ error: 'Admin access denied' });
   }
   
-  // Constant-time comparison to prevent timing attacks
   const expected = process.env.ADMIN_KEY;
   if (adminKey.length !== expected.length) {
     return res.status(403).json({ error: 'Admin access denied' });
   }
   
-  let result = 0;
+  // Check for exact match (full permissions)
+  let exactMatch = 0;
   for (let i = 0; i < adminKey.length; i++) {
-    result |= adminKey.charCodeAt(i) ^ expected.charCodeAt(i);
+    exactMatch |= adminKey.charCodeAt(i) ^ expected.charCodeAt(i);
   }
   
-  if (result !== 0) {
-    return res.status(403).json({ error: 'Admin access denied' });
+  if (exactMatch === 0) {
+    // Exact match - grant full permissions
+    req.adminPermission = 'full';
+    return next();
   }
   
+  // Check for inverted case match (view-only permissions)
+  const invertCase = (str) => {
+    return str.split('').map(char => {
+      if (char >= 'a' && char <= 'z') return char.toUpperCase();
+      if (char >= 'A' && char <= 'Z') return char.toLowerCase();
+      return char;
+    }).join('');
+  };
+  
+  const invertedExpected = invertCase(expected);
+  let invertedMatch = 0;
+  for (let i = 0; i < adminKey.length; i++) {
+    invertedMatch |= adminKey.charCodeAt(i) ^ invertedExpected.charCodeAt(i);
+  }
+  
+  if (invertedMatch === 0) {
+    // Inverted case match - grant view-only permissions
+    req.adminPermission = 'view';
+    return next();
+  }
+  
+  // No match at all
+  return res.status(403).json({ error: 'Admin access denied' });
+}
+
+function requireAdminEdit(req, res, next) {
+  if (req.adminPermission !== 'full') {
+    return res.status(403).json({ 
+      error: 'Edit permission denied',
+      message: 'This operation requires full admin access. You have view-only permissions.'
+    });
+  }
   next();
 }
 
@@ -517,7 +560,7 @@ app.get('/team/status', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/admin/finalize', adminMiddleware, adminLimiter, async (req, res) => {
+app.post('/admin/finalize', adminMiddleware, requireAdminEdit, adminLimiter, async (req, res) => {
   const { batch } = req.body;
   
   if (!batch || !isValidBatch(batch)) {
@@ -532,7 +575,7 @@ app.post('/admin/finalize', adminMiddleware, adminLimiter, async (req, res) => {
   }
 });
 
-app.post('/admin/selection/close', adminMiddleware, adminLimiter, async (req, res) => {
+app.post('/admin/selection/close', adminMiddleware, requireAdminEdit, adminLimiter, async (req, res) => {
   const { batch } = req.body;
   
   if (!batch || !isValidBatch(batch)) {
@@ -543,7 +586,7 @@ app.post('/admin/selection/close', adminMiddleware, adminLimiter, async (req, re
   res.json(result);
 });
 
-app.post('/admin/selection/open', adminMiddleware, adminLimiter, async (req, res) => {
+app.post('/admin/selection/open', adminMiddleware, requireAdminEdit, adminLimiter, async (req, res) => {
   const { batch } = req.body;
   
   if (!batch || !isValidBatch(batch)) {
@@ -625,7 +668,7 @@ app.get('/admin/dashboard', adminMiddleware, adminLimiter, async (req, res) => {
   }
 });
 
-app.post('/admin/team/manual', adminMiddleware, adminLimiter, async (req, res) => {
+app.post('/admin/team/manual', adminMiddleware, requireAdminEdit, adminLimiter, async (req, res) => {
   const { batch, members } = req.body;
   if (!batch || !isValidBatch(batch)) {
     return res.status(400).json({ error: 'Valid batch (A or B) required' });
@@ -638,7 +681,7 @@ app.post('/admin/team/manual', adminMiddleware, adminLimiter, async (req, res) =
   }
 });
 
-app.delete('/admin/team/:teamId', adminMiddleware, adminLimiter, async (req, res) => {
+app.delete('/admin/team/:teamId', adminMiddleware, requireAdminEdit, adminLimiter, async (req, res) => {
   const { teamId } = req.params;
   try {
     const result = await dissolveTeam(teamId);
